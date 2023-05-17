@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Examples.VerticalScrollerExample
 {
+    /// <summary>
+    /// Отвечает за логику уровней
+    /// </summary>
     public class LevelController : MonoBehaviour
     {
         private ILevelLoader _levelLoader;
@@ -13,7 +16,7 @@ namespace Examples.VerticalScrollerExample
 
         private void Awake()
         {
-            EventBus.Instance.LevelRestart += RestartLevel;
+            EventBus.Instance.StartLevel += StartLevel;
             EventBus.Instance.LevelTimePassed += LevelFinished;
             EventBus.Instance.NextLevel += NextLevel;
             EventBus.Instance.SelectShip += SelectLevel;
@@ -31,7 +34,7 @@ namespace Examples.VerticalScrollerExample
             _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
 
             EventBus.Instance.LevelSet?.Invoke(_currentLevel);
-            ServiceLocator.Current.Get<GameController>().StartGame();
+            StartLevel();
         }
 
         private void Start()
@@ -41,10 +44,10 @@ namespace Examples.VerticalScrollerExample
 
             _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
             EventBus.Instance.LevelSet?.Invoke(_currentLevel);
-            ServiceLocator.Current.Get<GameController>().StartGame();
+            StartLevel();
         }
         
-        private void RestartLevel()
+        private void StartLevel()
         {
             ServiceLocator.Current.Get<GameController>().StartGame();
         }
@@ -61,7 +64,7 @@ namespace Examples.VerticalScrollerExample
 
         private void OnDestroy()
         {
-            EventBus.Instance.LevelRestart -= RestartLevel;
+            EventBus.Instance.StartLevel -= StartLevel;
             EventBus.Instance.LevelTimePassed -= LevelFinished;
             EventBus.Instance.NextLevel -= NextLevel;
             EventBus.Instance.SelectShip -= SelectLevel;

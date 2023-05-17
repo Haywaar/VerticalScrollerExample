@@ -32,7 +32,7 @@ namespace Examples.VerticalScrollerExample
         
         //  Levels
         public Action<Level> LevelSet;
-        public Action LevelRestart;
+        public Action StartLevel;
         public Action NextLevel;
         public Action<Level> LevelPassed;
         public Action LevelTimePassed;

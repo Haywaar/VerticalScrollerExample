@@ -19,7 +19,7 @@ public class YouLoseDialog : Window
 
     private void TryAgain()
     {
-        EventBus.Instance.LevelRestart?.Invoke();
+        EventBus.Instance.StartLevel?.Invoke();
         Hide();
     }
 

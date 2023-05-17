@@ -28,6 +28,9 @@ namespace Examples.VerticalScrollerExample
         [SerializeField]
         private int _goldForPass;
 
+        /// <summary>
+        /// Инфа о спавне препятствий и бонусов
+        /// </summary>
         [SerializeField]
         private List<InteractableData> _interactableData;
 
