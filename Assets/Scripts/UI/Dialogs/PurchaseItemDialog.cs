@@ -1,10 +1,8 @@
-﻿using System;
-using Examples.VerticalScrollerExample.Scripts.UI;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Examples.VerticalScrollerExample
+namespace UI.Dialogs
 {
     public class PurchaseItemDialog : Window
     {

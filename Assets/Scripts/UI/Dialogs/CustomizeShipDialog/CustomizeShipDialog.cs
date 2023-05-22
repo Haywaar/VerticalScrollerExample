@@ -1,55 +1,64 @@
 using System.Linq;
+using CustomEventBus;
+using CustomEventBus.Signals;
 using DefaultNamespace;
-using Examples.VerticalScrollerExample;
 using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
-using Examples.VerticalScrollerExample.Scripts.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Окно выбора самолётика
-/// </summary>
-public class CustomizeShipDialog : Window
+namespace UI.Dialogs
 {
-    [SerializeField] private GridLayoutGroup _elementsGrid;
-    [SerializeField] private CustomizeShipSlot _shipSlotPrefab;
-    [SerializeField] private Button _exitButton;
-    [SerializeField] private Text _goldValue;
+    /// <summary>
+    /// Окно выбора самолётика
+    /// </summary>
+    public class CustomizeShipDialog : Window
+    {
+        [SerializeField] private GridLayoutGroup _elementsGrid;
+        [SerializeField] private CustomizeShipSlot _shipSlotPrefab;
+        [SerializeField] private Button _exitButton;
+        [SerializeField] private Text _goldValue;
+
+        private EventBus _eventBus;
     
-    protected override void Awake()
-    {
-        base.Awake();
-        
-        _exitButton.onClick.AddListener(Hide);
-        InitShipSlots();
-
-        var gold = ServiceLocator.Current.Get<GoldController>().Gold;
-        _goldValue.text = "Gold: " + gold;
-
-        EventBus.Instance.GoldChanged += RedrawGold;
-    }
-
-    private void InitShipSlots()
-    {
-        var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
-        var shipsData = shipDataLoader.GetShipsData();
-        shipsData = shipsData.OrderBy(x => x.ID);
-
-        foreach (var shipData in shipsData)
+        protected override void Awake()
         {
-            var shipSlot = GameObject.Instantiate(_shipSlotPrefab, _elementsGrid.transform);
-            bool purchased = PlayerPrefs.GetInt(StringConstants.SHIP_PURCHASED + shipData.ID, 0) == 1 || shipData.PurchasePrice == 0;
-            shipSlot.Init(shipData.ID, shipData.ShipSprite, shipData.PurchasePrice, purchased);
-        }
-    }
-    
-    private void  RedrawGold(int gold)
-    {
-        _goldValue.text = "Gold: " + gold;
-    }
+            base.Awake();
+        
+            _exitButton.onClick.AddListener(Hide);
+            InitShipSlots();
 
-    private void OnDestroy()
-    {
-        EventBus.Instance.GoldChanged -= RedrawGold;
+            var gold = ServiceLocator.Current.Get<GoldController>().Gold;
+            _goldValue.text = "Gold: " + gold;
+        }
+
+        private void Start()
+        {
+            _eventBus = ServiceLocator.Current.Get<EventBus>();
+            _eventBus.Subscribe<GoldChangedSignal>(RedrawGold);
+        }
+
+        private void InitShipSlots()
+        {
+            var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
+            var shipsData = shipDataLoader.GetShipsData();
+            shipsData = shipsData.OrderBy(x => x.ID);
+
+            foreach (var shipData in shipsData)
+            {
+                var shipSlot = GameObject.Instantiate(_shipSlotPrefab, _elementsGrid.transform);
+                bool purchased = PlayerPrefs.GetInt(StringConstants.SHIP_PURCHASED + shipData.ID, 0) == 1 || shipData.PurchasePrice == 0;
+                shipSlot.Init(shipData.ID, shipData.ShipSprite, shipData.PurchasePrice, purchased);
+            }
+        }
+    
+        private void  RedrawGold(GoldChangedSignal signal)
+        {
+            _goldValue.text = "Gold: " + signal.Gold;
+        }
+
+        private void OnDestroy()
+        {
+            _eventBus.Unsubscribe<GoldChangedSignal>(RedrawGold);
+        }
     }
 }

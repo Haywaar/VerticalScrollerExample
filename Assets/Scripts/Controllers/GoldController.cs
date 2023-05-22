@@ -1,45 +1,48 @@
-﻿using DefaultNamespace;
+﻿using CustomEventBus;
+using CustomEventBus.Signals;
+using DefaultNamespace;
 using UnityEngine;
 
-namespace Examples.VerticalScrollerExample
+public class GoldController : IService
 {
-    public class GoldController : IService
+    private int _gold;
+    public int Gold => _gold;
+
+    private EventBus _eventBus;
+
+    public GoldController()
     {
-        private int _gold;
-        public int Gold => _gold;
+        _gold = PlayerPrefs.GetInt(StringConstants.GOLD, 7);
 
-        public GoldController()
-        {
-            _gold = PlayerPrefs.GetInt(StringConstants.GOLD, 7);
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
 
-            EventBus.Instance.AddGold += OnAddGold;
-            EventBus.Instance.SpendGold += SpendGold;
-            EventBus.Instance.GoldChanged += GoldChanged;
-        }
+        _eventBus.Subscribe<AddGoldSignal>(OnAddGold);
+        _eventBus.Subscribe<SpendGoldSignal>(SpendGold);
+        _eventBus.Subscribe<GoldChangedSignal>(GoldChanged);
+    }
 
-        private void OnAddGold(int gold)
-        {
-            _gold += gold;
-            EventBus.Instance.GoldChanged?.Invoke(_gold);
-        }
+    private void OnAddGold(AddGoldSignal signal)
+    {
+        _gold += signal.Value;
+        _eventBus.Invoke(new GoldChangedSignal(_gold));
+    }
 
-        public bool HaveEnoughGold(int gold)
-        {
-            return _gold >= gold;
-        }
+    public bool HaveEnoughGold(int gold)
+    {
+        return _gold >= gold;
+    }
 
-        private void SpendGold(int gold)
+    private void SpendGold(SpendGoldSignal signal)
+    {
+        if (HaveEnoughGold(signal.Value))
         {
-            if (HaveEnoughGold(gold))
-            {
-                _gold -= gold;
-                EventBus.Instance.GoldChanged?.Invoke(_gold);
-            }
+            _gold -= signal.Value;
+            _eventBus.Invoke(new GoldChangedSignal(_gold));
         }
-        
-        private void GoldChanged(int gold)
-        {
-            PlayerPrefs.SetInt(StringConstants.GOLD, gold);
-        }
+    }
+
+    private void GoldChanged(GoldChangedSignal signal)
+    {
+        PlayerPrefs.SetInt(StringConstants.GOLD, signal.Gold);
     }
 }

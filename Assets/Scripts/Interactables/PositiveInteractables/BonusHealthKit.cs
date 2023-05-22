@@ -1,11 +1,14 @@
-using Examples.VerticalScrollerExample;
+using CustomEventBus.Signals;
 using UnityEngine;
 
-public class BonusHealthKit : Interactable
+namespace Interactables
 {
-    [SerializeField] private int _healValue = 1;
-    protected override void Interact()
+    public class BonusHealthKit : Interactable
     {
-        EventBus.Instance.AddHealth?.Invoke(_healValue);
+        [SerializeField] private int _healValue = 1;
+        protected override void Interact()
+        {
+            _eventBus.Invoke(new AddHealthSignal(_healValue));
+        }
     }
 }

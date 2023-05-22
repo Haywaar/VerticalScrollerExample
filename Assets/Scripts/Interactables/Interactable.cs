@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using CustomEventBus;
+using CustomEventBus.Signals;
+using UnityEngine;
 
-namespace Examples.VerticalScrollerExample
+namespace Interactables
 {
     /// <summary>
     /// Объекты с которыми может взаимодействовать Player
@@ -8,7 +10,14 @@ namespace Examples.VerticalScrollerExample
     /// </summary>
     public abstract class Interactable : MonoBehaviour
     {
+        protected EventBus _eventBus;
+
         protected abstract void Interact();
+
+        protected void Start()
+        {
+            _eventBus = ServiceLocator.Current.Get<EventBus>();
+        }
 
         private void OnTriggerEnter2D(Collider2D col)
         {
@@ -19,9 +28,9 @@ namespace Examples.VerticalScrollerExample
             }
         }
 
-        public void Dispose()
+        private void Dispose()
         {
-            EventBus.Instance.DisposeInteractable(this);
+            _eventBus.Invoke(new DisposeInteractableSignal(this));
         }
     }
 }

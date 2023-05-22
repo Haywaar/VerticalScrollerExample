@@ -1,6 +1,6 @@
-﻿using Examples.VerticalScrollerExample.Scripts.Player;
+﻿using CustomEventBus;
 using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
-using Examples.VerticalScrollerExample.Scripts.UI;
+using UI;
 using UnityEngine;
 
 namespace Examples.VerticalScrollerExample
@@ -21,6 +21,9 @@ namespace Examples.VerticalScrollerExample
         private void Awake()
         {
             ServiceLocator.Initialize();
+            
+            var eventBus = new EventBus();
+            ServiceLocator.Current.Register(eventBus);
             
             ServiceLocator.Current.Register<MovementController>(_movementController);
             ServiceLocator.Current.Register<SignalSpawner>(_signalSpawner);

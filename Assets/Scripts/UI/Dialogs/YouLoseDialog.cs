@@ -1,30 +1,37 @@
-using Examples.VerticalScrollerExample;
-using Examples.VerticalScrollerExample.Scripts.UI;
+using CustomEventBus;
+using CustomEventBus.Signals;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Окошко, отображающееся при проигрыше
-/// </summary>
-public class YouLoseDialog : Window
+namespace UI.Dialogs
 {
-    [SerializeField] private Button _tryAgainButton;
-    [SerializeField] private Button _goToMenuButton;
-
-    private void Awake()
+    /// <summary>
+    /// Окошко, отображающееся при проигрыше
+    /// </summary>
+    public class YouLoseDialog : Window
     {
-        _tryAgainButton.onClick.AddListener(TryAgain);
-        _goToMenuButton.onClick.AddListener(GoToMenu);
-    }
+        [SerializeField] private Button _tryAgainButton;
+        [SerializeField] private Button _goToMenuButton;
 
-    private void TryAgain()
-    {
-        EventBus.Instance.StartLevel?.Invoke();
-        Hide();
-    }
+        private EventBus _eventBus;
 
-    private void GoToMenu()
-    {
-        EventBus.Instance.GoToMenu?.Invoke();
+        private void Start()
+        {
+            _tryAgainButton.onClick.AddListener(TryAgain);
+            _goToMenuButton.onClick.AddListener(GoToMenu);
+
+            _eventBus = ServiceLocator.Current.Get<EventBus>();
+        }
+
+        private void TryAgain()
+        {
+            _eventBus.Invoke(new StartLevelSignal());
+            Hide();
+        }
+
+        private void GoToMenu()
+        {
+            _eventBus.Invoke(new GoToMenuSignal());
+        }
     }
 }

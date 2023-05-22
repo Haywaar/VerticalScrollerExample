@@ -1,4 +1,4 @@
-﻿namespace Examples.VerticalScrollerExample.PositiveInteractable
+﻿namespace Interactables
 {
     public class BonusTimeSkip : Interactable
     {

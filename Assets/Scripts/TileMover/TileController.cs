@@ -1,7 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Examples.VerticalScrollerExample;
+using CustomEventBus;
+using CustomEventBus.Signals;
 using UnityEngine;
 
 public class TileController : MonoBehaviour
@@ -12,20 +11,24 @@ public class TileController : MonoBehaviour
     private float _speedKoef;
 
     private bool _isRunning;
+
+    private EventBus _eventBus;
     private void Start()
     {
-        _movementController = ServiceLocator.Current.Get<MovementController>();
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
         
-        EventBus.Instance.GameStart += OnGameStart;
-        EventBus.Instance.GameStop += OnGameStop;
+        _eventBus.Subscribe<GameStartedSignal>(OnGameStart);
+        _eventBus.Subscribe<GameStopSignal>(OnGameStop);
+        
+        _movementController = ServiceLocator.Current.Get<MovementController>();
     }
 
-    private void OnGameStart()
+    private void OnGameStart(GameStartedSignal signal)
     {
         _isRunning = true;
     }
     
-    private void OnGameStop()
+    private void OnGameStop(GameStopSignal signal)
     {
         _isRunning = false;
     }
@@ -44,7 +47,7 @@ public class TileController : MonoBehaviour
 
     private void OnDestroy()
     {
-        EventBus.Instance.GameStart -= OnGameStart;
-        EventBus.Instance.GameStop -= OnGameStop;
+        _eventBus.Unsubscribe<GameStartedSignal>(OnGameStart);
+        _eventBus.Unsubscribe<GameStopSignal>(OnGameStop);
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using UI.Dialogs;
 using UnityEngine;
 
-namespace Examples.VerticalScrollerExample.Scripts.UI
+namespace UI
 {
     public class WindowManager
     {

@@ -1,8 +1,7 @@
-﻿using Examples.VerticalScrollerExample.Scripts.UI;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Examples.VerticalScrollerExample
+namespace UI.Dialogs
 {
     public class ScoreTableSlot: Window
     {

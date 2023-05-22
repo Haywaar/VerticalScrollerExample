@@ -1,95 +1,97 @@
 ﻿using System;
+using CustomEventBus;
+using CustomEventBus.Signals;
 using Cysharp.Threading.Tasks;
-using Examples.VerticalScrollerExample.NegativeInteractables;
-using Examples.VerticalScrollerExample.PositiveInteractable;
+using Interactables;
 using UnityEngine;
 
-namespace Examples.VerticalScrollerExample
+/// <summary>
+/// Крутит таймеры и отправляет сигналы на спавн разных сущностей
+/// </summary>
+public class SignalSpawner : MonoBehaviour, IService
 {
-    /// <summary>
-    /// Крутит таймеры и отправляет сигналы на спавн разных сущностей
-    /// </summary>
-    public class SignalSpawner : MonoBehaviour, IService
+    private bool _isLevelRunning = false;
+    private Level _level;
+
+    private float _curTime;
+
+    private EventBus _eventBus;
+
+    private void Start()
     {
-        private bool _isLevelRunning = false;
-        private Level _level;
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
 
-        private float _curTime;
+        _eventBus.Subscribe<SetLevelSignal>(LevelSet);
+        _eventBus.Subscribe<GameStartedSignal>(GameStart);
+        _eventBus.Subscribe<GameStopSignal>(GameStop);
+    }
 
-        private void Awake()
+    private void LevelSet(SetLevelSignal signal)
+    {
+        _level = signal.Level;
+    }
+
+    private void GameStart(GameStartedSignal signal)
+    {
+        _isLevelRunning = true;
+
+        _curTime = 0f;
+
+        var interactables = _level.InteractableData;
+
+        foreach (var interactableData in interactables)
         {
-            EventBus.Instance.LevelSet += LevelSet;
-            EventBus.Instance.GameStop += LevelStop;
-            EventBus.Instance.GameStart += GameStart;
+            SpawnInteractable(interactableData);
         }
 
-        private void LevelSet(Level level)
+        TrackTime();
+    }
+
+    private async UniTask SpawnInteractable(InteractableData interactableData)
+    {
+        var cooldown = interactableData.StartCooldown;
+
+        await UniTask.Delay(TimeSpan.FromSeconds(interactableData.PrewarmTime));
+        while (_isLevelRunning)
         {
-            _level = level;
+            _eventBus.Invoke(new SpawnInteractableSignal(interactableData.InteractablePrefab));
+
+            await UniTask.Delay(TimeSpan.FromSeconds(cooldown));
+            cooldown = Mathf.Lerp(interactableData.StartCooldown,
+                interactableData.EndCooldown, (_curTime / _level.LevelLength));
         }
+    }
 
-        private void GameStart()
+    private void GameStop(GameStopSignal signal)
+    {
+        _isLevelRunning = false;
+    }
+
+    private async UniTask TrackTime()
+    {
+        while (_isLevelRunning)
         {
-            _isLevelRunning = true;
+            await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
+            _curTime += 0.1f;
 
-            _curTime = 0f;
+            var levelProgress = _curTime / _level.LevelLength;
 
-            var interactables = _level.InteractableData;
+            _eventBus.Invoke(new LevelProgressChangedSignal(levelProgress));
 
-            foreach (var interactableData in interactables)
+            if (_curTime >= _level.LevelLength)
             {
-                SpawnInteractable(interactableData);
-            }
-
-            TrackTime();
-        }
-
-        private async UniTask SpawnInteractable(InteractableData interactableData)
-        {
-            var cooldown = interactableData.StartCooldown;
-            
-            await UniTask.Delay(TimeSpan.FromSeconds(interactableData.PrewarmTime));
-            while (_isLevelRunning)
-            {
-                EventBus.Instance.SpawnInteractable?.Invoke(interactableData.InteractablePrefab);
-                
-                await UniTask.Delay(TimeSpan.FromSeconds(cooldown));
-                cooldown = Mathf.Lerp(interactableData.StartCooldown,
-                    interactableData.EndCooldown, (_curTime / _level.LevelLength));
-            }
-        }
-
-        private void LevelStop()
-        {
-            _isLevelRunning = false;
-        }
-
-        private async UniTask TrackTime()
-        {
-            while (_isLevelRunning)
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
-                _curTime += 0.1f;
-
-                var levelProgress = _curTime /_level.LevelLength;
-
-                EventBus.Instance.LevelProgressChanged?.Invoke(levelProgress);
-
-                if (_curTime >= _level.LevelLength)
-                {
-                    EventBus.Instance.LevelTimePassed?.Invoke();
-                    _isLevelRunning = false;
-                }
+                _eventBus.Invoke(new LevelTimePassedSignal());
+                _isLevelRunning = false;
             }
         }
+    }
 
-        private void OnDestroy()
-        {
-            _isLevelRunning = false;
+    private void OnDestroy()
+    {
+        _isLevelRunning = false;
 
-            EventBus.Instance.LevelSet -= LevelSet;
-            EventBus.Instance.GameStop -= LevelStop;
-            EventBus.Instance.GameStart -= GameStart;
-        }
+        _eventBus.Unsubscribe<SetLevelSignal>(LevelSet);
+        _eventBus.Unsubscribe<GameStartedSignal>(GameStart);
+        _eventBus.Unsubscribe<GameStopSignal>(GameStop);
     }
 }

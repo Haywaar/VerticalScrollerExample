@@ -1,13 +1,14 @@
-﻿using UnityEngine;
+﻿using CustomEventBus.Signals;
+using UnityEngine;
 
-namespace Examples.VerticalScrollerExample.PositiveInteractable
+namespace Interactables
 {
     public class BonusGold : Interactable
     {
         [SerializeField] private int _goldValue = 10;
         protected override void Interact()
         {
-            EventBus.Instance.AddScore?.Invoke(_goldValue);
+            _eventBus.Invoke(new AddScoreSignal(_goldValue));
         }
     }
 }

@@ -1,32 +1,34 @@
-using Examples.VerticalScrollerExample.Scripts.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Окно настроек(звуки, сброс PlayerPrefs и прочее)
-/// </summary>
-public class SettingsDialog : Window
+namespace UI.Dialogs
 {
-   [SerializeField] private Toggle _soundOn;
-   [SerializeField] private Button _resetPlayerPrefsButton;
-   [SerializeField] private Button _backButton;
-
-   protected override void Awake()
+   /// <summary>
+   /// Окно настроек(звуки, сброс PlayerPrefs и прочее)
+   /// </summary>
+   public class SettingsDialog : Window
    {
-      base.Awake();
+      [SerializeField] private Toggle _soundOn;
+      [SerializeField] private Button _resetPlayerPrefsButton;
+      [SerializeField] private Button _backButton;
+
+      protected override void Awake()
+      {
+         base.Awake();
       
-      _soundOn.onValueChanged.AddListener(OnSoundOnChanged);
-      _resetPlayerPrefsButton.onClick.AddListener(OnResetBtnClicked);
-      _backButton.onClick.AddListener(Hide);
-   }
+         _soundOn.onValueChanged.AddListener(OnSoundOnChanged);
+         _resetPlayerPrefsButton.onClick.AddListener(OnResetBtnClicked);
+         _backButton.onClick.AddListener(Hide);
+      }
 
-   private void OnSoundOnChanged(bool val)
-   {
-      //TODO
-   }
+      private void OnSoundOnChanged(bool val)
+      {
+         //TODO
+      }
 
-   private void OnResetBtnClicked()
-   {
-      PlayerPrefs.DeleteAll();
+      private void OnResetBtnClicked()
+      {
+         PlayerPrefs.DeleteAll();
+      }
    }
 }

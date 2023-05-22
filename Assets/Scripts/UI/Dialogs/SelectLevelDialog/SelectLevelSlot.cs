@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Examples.VerticalScrollerExample
+namespace UI.Dialogs
 {
     /// <summary>
     /// Слот выбора уровня(используется в SelectlevelDialog)

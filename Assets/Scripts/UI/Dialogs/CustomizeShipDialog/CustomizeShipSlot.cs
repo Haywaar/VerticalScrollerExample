@@ -1,10 +1,11 @@
 ﻿using System;
+using CustomEventBus;
+using CustomEventBus.Signals;
 using DefaultNamespace;
-using Examples.VerticalScrollerExample.Scripts.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Examples.VerticalScrollerExample
+namespace UI.Dialogs
 {
     /// <summary>
     /// Слот выбора самолётика(лежит в CustomizeShipDialog)
@@ -22,10 +23,14 @@ namespace Examples.VerticalScrollerExample
         private bool _isPurchased;
         private int _shipId;
 
-        private void Awake()
+        private EventBus _eventBus;
+
+        private void Start()
         {
             _selectShipButton.onClick.AddListener(TrySelectShip);
-            EventBus.Instance.SelectShip += OnShipSelected;
+
+            _eventBus = ServiceLocator.Current.Get<EventBus>();
+            _eventBus.Subscribe<SelectShipSignal>(OnShipSelected);
         }
         
         public void Init(int id, Sprite shipSprite, int price, bool isPurchased)
@@ -41,10 +46,10 @@ namespace Examples.VerticalScrollerExample
             _notPurchasedLock.SetActive(!isPurchased);
         }
 
-        private void OnShipSelected(int selectedShipId)
+        private void OnShipSelected(SelectShipSignal signal)
         {
             _notPurchasedLock.SetActive(!_isPurchased);
-            _selectedCheck.SetActive(selectedShipId == _shipId);
+            _selectedCheck.SetActive(signal.ShipId == _shipId);
         }
 
         private void TrySelectShip()
@@ -60,11 +65,12 @@ namespace Examples.VerticalScrollerExample
                     var dialog = WindowManager.GetWindow<PurchaseItemDialog>();
                     dialog.Init("Are you sure, that you want to buy this ship for " + _price + " gold ?", () =>
                     {
-                        EventBus.Instance.SpendGold?.Invoke(_price);
+                        _eventBus.Invoke(new SpendGoldSignal(_price));
+                        
                         _isPurchased = true;
                         PlayerPrefs.SetInt(StringConstants.SHIP_PURCHASED + _shipId, 1);
                         
-                        EventBus.Instance.SelectShip?.Invoke(_shipId);
+                        _eventBus.Invoke(new SelectShipSignal(_shipId));
                         PlayerPrefs.SetInt(StringConstants.SELECTED_SHIP, _shipId);
                     });
                 }
@@ -77,7 +83,7 @@ namespace Examples.VerticalScrollerExample
             }
             else
             {
-                EventBus.Instance.SelectShip?.Invoke(_shipId);
+                _eventBus.Invoke(new SelectShipSignal(_shipId));
                 PlayerPrefs.SetInt(StringConstants.SELECTED_SHIP, _shipId);
             }
         }
@@ -85,7 +91,7 @@ namespace Examples.VerticalScrollerExample
         private void OnDestroy()
         {
             _selectShipButton.onClick.RemoveListener(TrySelectShip);
-            EventBus.Instance.SelectShip -= OnShipSelected;
+            _eventBus.Unsubscribe<SelectShipSignal>(OnShipSelected);
         }
     }
 }

@@ -2,13 +2,13 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Examples.VerticalScrollerExample.Scripts.MyPool
+namespace CustomPool
 {
     public class CustomPool<T> where T : MonoBehaviour
     {
         private T _prefab;
         private List<T> _objects;
-        
+
         public CustomPool(T prefab, int prewarmObjects)
         {
             _prefab = prefab;
@@ -42,9 +42,9 @@ namespace Examples.VerticalScrollerExample.Scripts.MyPool
 
         private T Create()
         {
-           var obj = GameObject.Instantiate(_prefab);
-           _objects.Add(obj);
-           return obj;
+            var obj = GameObject.Instantiate(_prefab);
+            _objects.Add(obj);
+            return obj;
         }
     }
 }

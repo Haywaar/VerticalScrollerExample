@@ -1,4 +1,4 @@
-﻿namespace Examples.VerticalScrollerExample.NegativeInteractables
+﻿namespace Interactables
 {
     public class SlowMine : Interactable
     {

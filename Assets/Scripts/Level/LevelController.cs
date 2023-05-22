@@ -1,73 +1,77 @@
 ﻿using System.Linq;
+using CustomEventBus;
+using CustomEventBus.Signals;
 using DefaultNamespace;
-using Examples.VerticalScrollerExample.Scripts.Player;
 using UnityEngine;
 
-namespace Examples.VerticalScrollerExample
+
+/// <summary>
+/// Отвечает за логику уровней
+/// </summary>
+public class LevelController : MonoBehaviour
 {
-    /// <summary>
-    /// Отвечает за логику уровней
-    /// </summary>
-    public class LevelController : MonoBehaviour
+    private ILevelLoader _levelLoader;
+    private int _currentLevelId;
+    private Level _currentLevel;
+
+    private EventBus _eventBus;
+
+    private void Start()
     {
-        private ILevelLoader _levelLoader;
-        private int _currentLevelId;
-        private Level _currentLevel;
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
+        _eventBus.Subscribe<LevelTimePassedSignal>(LevelFinished);
+        _eventBus.Subscribe<StartLevelSignal>(StartLevel);
+        _eventBus.Subscribe<NextLevelSignal>(NextLevel);
 
-        private void Awake()
-        {
-            EventBus.Instance.StartLevel += StartLevel;
-            EventBus.Instance.LevelTimePassed += LevelFinished;
-            EventBus.Instance.NextLevel += NextLevel;
-            EventBus.Instance.SelectShip += SelectLevel;
-        }
+        _levelLoader = ServiceLocator.Current.Get<ILevelLoader>();
+        _currentLevelId = PlayerPrefs.GetInt(StringConstants.CURRENT_LEVEL, 0);
 
-        private void NextLevel()
-        {
-            _currentLevelId++;
-            SelectLevel(_currentLevelId);
-        }
+        _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
+        _eventBus.Invoke(new SetLevelSignal(_currentLevel));
+        StartLevel();
+    }
 
-        private void SelectLevel(int level)
-        {
-            _currentLevelId = level;
-            _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
+    private void NextLevel(NextLevelSignal signal)
+    {
+        _currentLevelId++;
+        SelectLevel(_currentLevelId);
+    }
 
-            EventBus.Instance.LevelSet?.Invoke(_currentLevel);
-            StartLevel();
-        }
+    private void SelectLevel(int level)
+    {
+        _currentLevelId = level;
+        _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
 
-        private void Start()
-        {
-            _levelLoader = ServiceLocator.Current.Get<ILevelLoader>();
-            _currentLevelId = PlayerPrefs.GetInt(StringConstants.CURRENT_LEVEL, 0);
+        _eventBus.Invoke(new SetLevelSignal(_currentLevel));
+        StartLevel();
+    }
 
-            _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
-            EventBus.Instance.LevelSet?.Invoke(_currentLevel);
-            StartLevel();
-        }
-        
-        private void StartLevel()
-        {
-            ServiceLocator.Current.Get<GameController>().StartGame();
-        }
-        
-        private void LevelFinished()
-        {
-            var player = ServiceLocator.Current.Get<Player>();
-            if (player.Health > 0)
-            {
-                PlayerPrefs.SetInt(StringConstants.CURRENT_LEVEL, (_currentLevelId + 1));
-                EventBus.Instance.LevelPassed?.Invoke(_currentLevel);
-            }
-        }
 
-        private void OnDestroy()
+    private void StartLevel(StartLevelSignal signal)
+    {
+        StartLevel();
+    }
+
+    private void StartLevel()
+    {
+        ServiceLocator.Current.Get<GameController>().StartGame();
+    }
+
+    private void LevelFinished(LevelTimePassedSignal signal)
+    {
+        var player = ServiceLocator.Current.Get<Player>();
+        if (player.Health > 0)
         {
-            EventBus.Instance.StartLevel -= StartLevel;
-            EventBus.Instance.LevelTimePassed -= LevelFinished;
-            EventBus.Instance.NextLevel -= NextLevel;
-            EventBus.Instance.SelectShip -= SelectLevel;
+            PlayerPrefs.SetInt(StringConstants.CURRENT_LEVEL, (_currentLevelId + 1));
+            _eventBus.Invoke(new LevelFinishedSignal(_currentLevel));
         }
+    }
+
+    private void OnDestroy()
+    {
+        _eventBus.Unsubscribe<StartLevelSignal>(StartLevel);
+        _eventBus.Unsubscribe<NextLevelSignal>(NextLevel);
+
+        _eventBus.Unsubscribe<LevelTimePassedSignal>(LevelFinished);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Examples.VerticalScrollerExample.Scripts.UI
+namespace UI
 {
     public abstract class Window : MonoBehaviour
     {

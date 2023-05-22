@@ -1,121 +1,129 @@
 ﻿using System.Collections;
+using CustomEventBus;
+using CustomEventBus.Signals;
 using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
 using UnityEngine;
 
-namespace Examples.VerticalScrollerExample.Scripts.Player
+public class Player : MonoBehaviour, IService
 {
-    public class Player : MonoBehaviour, IService
+    [SerializeField] private int _health = 3;
+    [SerializeField] private float _speedKoef = 3f;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private GameObject _shieldObject;
+
+    private int _score;
+
+    public int Health => _health;
+    public float SpeedKoef => _speedKoef;
+
+    private bool _isShielded = false;
+    public int Score => _score;
+
+    private EventBus _eventBus;
+
+    private void Start()
     {
-        [SerializeField] private int _health = 3;
-        [SerializeField] private float _speedKoef = 3f;
-        [SerializeField] private SpriteRenderer _spriteRenderer;
-        [SerializeField] private GameObject _shieldObject;
-        
-        private int _score;
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
+        _eventBus.Subscribe<PlayerDamagedSignal>(OnPlayerDamaged);
+        _eventBus.Subscribe<AddHealthSignal>(OnAddHealth);
+        _eventBus.Subscribe<AddScoreSignal>(OnScoreAdded);
+        _eventBus.Subscribe<AddShieldSignal>(AddShield);
+        _eventBus.Subscribe<GameStartedSignal>(GameStarted);
+        _eventBus.Subscribe<GameStopSignal>(GameStop);
 
-        public int Health => _health;
-        public float SpeedKoef => _speedKoef;
+        var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
+        var shipData = shipDataLoader.GetCurrentShipData();
+        _spriteRenderer.sprite = shipData.ShipSprite;
+        _speedKoef = shipData.MovementSpeed;
+    }
 
-        private bool _isShielded = false;
-        public int Score => _score;
-        private void Awake()
+    private void OnScoreAdded(AddScoreSignal signal)
+    {
+        _score += signal.Value;
+        _eventBus.Invoke(new ScoreChangedSignal(_score));
+    }
+
+    private void OnScoreAdded(int value)
+    {
+        _score += value;
+        _eventBus.Invoke(new ScoreChangedSignal(_score));
+    }
+
+    private void GameStarted(GameStartedSignal signal)
+    {
+        //TODO - хелс должен лежать в конфиге уровня
+        _health = 3;
+        _eventBus.Invoke(new HealthChangedSignal(_health));
+
+
+        _score = 0;
+        _eventBus.Invoke(new ScoreChangedSignal(_score));
+    }
+
+    private void OnPlayerDamaged(PlayerDamagedSignal signal)
+    {
+        int val = signal.Health;
+
+        if (_isShielded)
+            return;
+
+        _health -= val;
+        if (_health < 0)
         {
-            EventBus.Instance.PlayerDamaged += OnPlayerDamaged;
-            EventBus.Instance.AddHealth += OnAddHealth;
-            EventBus.Instance.AddScore += OnScoreAdded;
-            EventBus.Instance.AddShield += AddShield;
-
-            EventBus.Instance.GameStart += GameStarted;
-            EventBus.Instance.GameStop += GameStop;
+            _health = 0;
         }
 
-        private void Start()
-        {
-            var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
-            var shipData = shipDataLoader.GetCurrentShipData();
-            _spriteRenderer.sprite = shipData.ShipSprite;
-            _speedKoef = shipData.MovementSpeed;
-        }
+        _eventBus.Invoke(new HealthChangedSignal(_health));
 
-        private void OnScoreAdded(int val)
+        if (_health == 0)
         {
-            _score += val;
-            EventBus.Instance.ScoreChanged?.Invoke(_score);
+            _eventBus.Invoke(new PlayerDeadSignal());
         }
+    }
 
-        private void GameStarted()
+    private void OnAddHealth(AddHealthSignal signal)
+    {
+        _health += signal.Value;
+
+        //TODO - в настройки
+        if (_health > 3)
         {
-            //TODO - хелс должен лежать в конфиге уровня
+            OnScoreAdded(50 * (_health - 3));
             _health = 3;
-            EventBus.Instance.PlayerHealthChanged?.Invoke(_health);
-            
-            
-            _score = 0;
-            EventBus.Instance.ScoreChanged?.Invoke(_score);
         }
 
-        private void OnPlayerDamaged(int val)
-        {
-            if(_isShielded)
-                return;
-            
-            _health -= val;
-            if (_health < 0)
-            {
-                _health = 0;
-            }
+        _eventBus.Invoke(new HealthChangedSignal(_health));
+    }
 
-            EventBus.Instance.PlayerHealthChanged?.Invoke(_health);
+    private void GameStop(GameStopSignal signal)
+    {
+        _shieldObject.gameObject.SetActive(false);
+        _isShielded = false;
+    }
 
-            if (_health == 0)
-            {
-                EventBus.Instance.PlayerDead?.Invoke();
-            }
-        }
-        
-        private void OnAddHealth(int val)
-        {
-            _health += val;
-            
-            //TODO - в настройки
-            if (_health > 3)
-            {
-                OnScoreAdded(50*(_health - 3));
-                _health = 3;
-            }
-            
-            EventBus.Instance.PlayerHealthChanged?.Invoke(_health);
-        }
-        
-        private void GameStop()
-        {
-            _shieldObject.gameObject.SetActive(false);
-            _isShielded = false;
-        }
+    private void AddShield(AddShieldSignal signal)
+    {
+        StartCoroutine(ActivateShield(signal.ShieldDuration));
+    }
 
-        private void AddShield(float time)
-        {
-            StartCoroutine(ActivateShield(time));
-        }
+    private IEnumerator ActivateShield(float waitTime)
+    {
+        _isShielded = true;
+        _shieldObject.gameObject.SetActive(true);
+        yield return new WaitForSeconds(waitTime);
+        _shieldObject.gameObject.SetActive(false);
+        _isShielded = false;
+    }
 
-        private IEnumerator ActivateShield(float waitTime)
-        {
-            _isShielded = true;
-            _shieldObject.gameObject.SetActive(true);
-            yield return new WaitForSeconds(waitTime);
-            _shieldObject.gameObject.SetActive(false);
-            _isShielded = false;
-        }
-        
-        private void OnDestroy()
-        {
-            EventBus.Instance.PlayerDamaged -= OnPlayerDamaged;
-            EventBus.Instance.AddHealth -= OnAddHealth;
-            EventBus.Instance.AddScore -= OnScoreAdded;
-            EventBus.Instance.GameStart -= GameStarted;
-            
-            EventBus.Instance.AddShield -= AddShield;
-            EventBus.Instance.GameStop -= GameStop;
-        }
+    private void OnDestroy()
+    {
+        _eventBus.Unsubscribe<PlayerDamagedSignal>(OnPlayerDamaged);
+        _eventBus.Unsubscribe<AddHealthSignal>(OnAddHealth);
+
+        _eventBus.Unsubscribe<AddScoreSignal>(OnScoreAdded);
+        _eventBus.Unsubscribe<AddShieldSignal>(AddShield);
+
+        _eventBus.Unsubscribe<GameStartedSignal>(GameStarted);
+        _eventBus.Unsubscribe<GameStopSignal>(GameStop);
     }
 }

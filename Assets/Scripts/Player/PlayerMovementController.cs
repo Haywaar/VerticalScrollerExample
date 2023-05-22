@@ -1,57 +1,51 @@
-﻿using System;
+﻿using CustomEventBus;
+using CustomEventBus.Signals;
 using UnityEngine;
 
-namespace Examples.VerticalScrollerExample.Scripts.Player
+public class PlayerMovementController : MonoBehaviour
 {
-    public class PlayerMovementController : MonoBehaviour
+    [SerializeField] private Player _player;
+
+    private float _minX;
+    private float _maxX;
+
+    private bool _canMove = true;
+
+    private EventBus _eventBus;
+
+    private void Start()
     {
-        [SerializeField] private Player _player;
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
 
-        private float _minX;
-        private float _maxX;
+        _eventBus.Subscribe<GameStopSignal>(x => { _canMove = false; });
 
-        private bool _canMove = true;
+        _eventBus.Subscribe<GameStartedSignal>(x => { _canMove = true; });
 
-        private void Awake()
-        {
-            EventBus.Instance.GameStop += () =>
-            {
-                _canMove = false;
-            };
-            
-            EventBus.Instance.GameStart += () =>
-            {
-                _canMove = true;
-            };
-        }
+        var spawner = ServiceLocator.Current.Get<InteractablesSpawner>();
+        _maxX = spawner.MaxX;
+        _minX = spawner.MinX;
+    }
 
-        private void Start()
-        {
-            var spawner = ServiceLocator.Current.Get<InteractablesSpawner>();
-            _maxX = spawner.MaxX;
-            _minX = spawner.MinX;
-        }
+    private void Update()
+    {
+        if (!_canMove)
+            return;
 
-        private void Update()
-        {
-            if(!_canMove)
-                return;
-            
-            var playerInput = Input.GetAxisRaw("Horizontal");
-            
-            if(playerInput == 1.0f && _player.transform.position.x > _maxX)
-                return;
-            
-            if(playerInput == -1.0f && _player.transform.position.x < _minX)
-                return;
-            
-            _player.transform.Translate(Vector3.right * (Time.deltaTime * playerInput * _player.SpeedKoef));
-        }
+        var playerInput = Input.GetAxisRaw("Horizontal");
 
-        private void OnDestroy()
-        {
-            EventBus.Instance.GameStop -= () => { _canMove = false; };
-            EventBus.Instance.GameStart -= () => { _canMove = true; };
-        }
+        if (playerInput == 1.0f && _player.transform.position.x > _maxX)
+            return;
+
+        if (playerInput == -1.0f && _player.transform.position.x < _minX)
+            return;
+
+        _player.transform.Translate(Vector3.right * (Time.deltaTime * playerInput * _player.SpeedKoef));
+    }
+
+    private void OnDestroy()
+    {
+        _eventBus.Unsubscribe<GameStopSignal>(x => { _canMove = false; });
+
+        _eventBus.Unsubscribe<GameStartedSignal>(x => { _canMove = true; });
     }
 }

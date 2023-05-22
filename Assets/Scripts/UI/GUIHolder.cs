@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Examples.VerticalScrollerExample.Scripts.UI
+namespace UI
 {
 /// <summary>
 /// Пустой компонент, который мы навесим как рут для всех UI объектов

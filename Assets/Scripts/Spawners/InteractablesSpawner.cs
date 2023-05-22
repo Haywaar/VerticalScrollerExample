@@ -1,80 +1,87 @@
-﻿using System;
-using System.Collections.Generic;
-using Examples.VerticalScrollerExample.Scripts.MyPool;
+﻿using System.Collections.Generic;
+using CustomEventBus;
+using CustomEventBus.Signals;
+using CustomPool;
+using Interactables;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Examples.VerticalScrollerExample
+/// <summary>
+/// При поступлении сигнала Spawn достаёт нужный объект из пула
+/// Или генирирует новый
+/// </summary>
+public class InteractablesSpawner : MonoBehaviour, IService
 {
-    /// <summary>
-    /// При поступлении сигнала Spawn достаёт нужный объект из пула
-    /// Или генирирует новый
-    /// </summary>
-    public class InteractablesSpawner : MonoBehaviour, IService
+    [SerializeField] private Transform _parent;
+    [SerializeField] private float _minX;
+    [SerializeField] private float _maxX;
+    [SerializeField] private float _defaultY;
+
+    public float MinX => _minX;
+    public float MaxX => _maxX;
+
+    private readonly Dictionary<string, CustomPool<Interactable>> _pools =
+        new Dictionary<string, CustomPool<Interactable>>();
+
+    private EventBus _eventBus;
+
+    public void Start()
     {
-        [SerializeField] private Transform _parent;
-        [SerializeField] private float _minX;
-        [SerializeField] private float _maxX;
-        [SerializeField] private float _defaultY;
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
 
-        public float MinX => _minX;
-        public float MaxX => _maxX;
+        _eventBus.Subscribe<SpawnInteractableSignal>(Spawn);
+        _eventBus.Subscribe<DisposeInteractableSignal>(Dispose);
+    }
 
-        private readonly Dictionary<string, CustomPool<Interactable>> _pools = new Dictionary<string, CustomPool<Interactable>>();
+    private void Spawn(SpawnInteractableSignal signal)
+    {
+        var pool = GetPool(signal.Interactable);
 
-        public void Awake()
+        var item = pool.Get();
+        item.transform.parent = _parent;
+        item.transform.position = RandomizeSpawnPosition();
+
+        _eventBus.Invoke(new InteractableActivatedSignal(item));
+    }
+
+    private void Dispose(DisposeInteractableSignal signal)
+    {
+        var interactable = signal.Interactable;
+        var pool = GetPool(interactable);
+        pool.Release(interactable);
+
+        _eventBus.Invoke(new InteractableDisposedSignal(interactable));
+    }
+
+    private CustomPool<Interactable> GetPool(Interactable interactable)
+    {
+        var objectTypeStr = interactable.GetType().ToString();
+        CustomPool<Interactable> pool;
+
+        // Такого пула нет - создаём новый пул
+        if (!_pools.ContainsKey(objectTypeStr))
         {
-            EventBus.Instance.SpawnInteractable += Spawn;
-            EventBus.Instance.DisposeInteractable += Dispose;
+            pool = new CustomPool<Interactable>(interactable, 5);
+            _pools.Add(objectTypeStr, pool);
+        }
+        // Пул есть - возвращаем пул
+        else
+        {
+            pool = _pools[objectTypeStr];
         }
 
-        private void Spawn(Interactable interactable)
-        {
-            var pool = GetPool(interactable);
-            
-            var item = pool.Get();
-            item.transform.parent = _parent;
-            item.transform.position = RandomizeSpawnPosition();
-            EventBus.Instance.InteractableActivated?.Invoke(item);
-        }
+        return pool;
+    }
 
-        private void Dispose(Interactable interactable)
-        {
-            var pool = GetPool(interactable);
-            pool.Release(interactable);
-            EventBus.Instance.InteractableDisposed?.Invoke(interactable);
-        }
+    private Vector3 RandomizeSpawnPosition()
+    {
+        float x = Random.Range(_minX, _maxX);
+        return new Vector3(x, _defaultY, 0);
+    }
 
-        private CustomPool<Interactable> GetPool(Interactable interactable)
-        {
-            var objectTypeStr = interactable.GetType().ToString();
-            CustomPool<Interactable> pool;
-            
-            // Такого пула нет - создаём новый пул
-            if (!_pools.ContainsKey(objectTypeStr))
-            {
-                pool = new CustomPool<Interactable>(interactable, 5);
-                _pools.Add(objectTypeStr, pool);
-            }
-            // Пул есть - возвращаем пул
-            else
-            {
-                pool = _pools[objectTypeStr];
-            }
-
-            return pool;
-        }
-
-        private Vector3 RandomizeSpawnPosition()
-        {
-            float x = Random.Range(_minX, _maxX);
-            return new Vector3(x, _defaultY, 0);
-        }
-
-        private void OnDestroy()
-        {
-            EventBus.Instance.SpawnInteractable -= Spawn;
-            EventBus.Instance.DisposeInteractable -= Dispose;
-        }
+    private void OnDestroy()
+    {
+        _eventBus.Unsubscribe<SpawnInteractableSignal>(Spawn);
+        _eventBus.Unsubscribe<DisposeInteractableSignal>(Dispose);
     }
 }

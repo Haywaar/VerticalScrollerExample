@@ -1,13 +1,14 @@
-﻿using UnityEngine;
+﻿using CustomEventBus.Signals;
+using UnityEngine;
 
-namespace Examples.VerticalScrollerExample.PositiveInteractable
+namespace Interactables
 {
     public class BonusShield : Interactable
     {
         [SerializeField] private float _shieldTime = 4f;
         protected override void Interact()
         {
-            EventBus.Instance.AddShield?.Invoke(_shieldTime);
+            _eventBus.Invoke(new AddShieldSignal(_shieldTime));
         }
     }
 }

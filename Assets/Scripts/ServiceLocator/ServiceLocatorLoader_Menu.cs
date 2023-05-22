@@ -1,5 +1,6 @@
-﻿using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
-using Examples.VerticalScrollerExample.Scripts.UI;
+﻿using CustomEventBus;
+using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
+using UI;
 using UnityEngine;
 
 namespace Examples.VerticalScrollerExample
@@ -13,6 +14,9 @@ namespace Examples.VerticalScrollerExample
         private void Awake()
         {
             ServiceLocator.Initialize();
+            
+            var eventBus = new EventBus();
+            ServiceLocator.Current.Register(eventBus);
             
             ServiceLocator.Current.Register<ILevelLoader>(_levelLoader);
             ServiceLocator.Current.Register<GUIHolder>(_guiHolder);
