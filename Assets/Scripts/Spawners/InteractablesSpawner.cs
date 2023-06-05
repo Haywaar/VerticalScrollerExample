@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using CustomEventBus;
 using CustomEventBus.Signals;
-using CustomPool;
 using Interactables;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -20,8 +19,8 @@ public class InteractablesSpawner : MonoBehaviour, IService
     public float MinX => _minX;
     public float MaxX => _maxX;
 
-    private readonly Dictionary<string, CustomPool<Interactable>> _pools =
-        new Dictionary<string, CustomPool<Interactable>>();
+    private readonly Dictionary<string, CustomUnityPool> _pools =
+        new Dictionary<string, CustomUnityPool>();
 
     private EventBus _eventBus;
 
@@ -53,15 +52,15 @@ public class InteractablesSpawner : MonoBehaviour, IService
         _eventBus.Invoke(new InteractableDisposedSignal(interactable));
     }
 
-    private CustomPool<Interactable> GetPool(Interactable interactable)
+    private CustomUnityPool GetPool(Interactable interactable)
     {
         var objectTypeStr = interactable.GetType().ToString();
-        CustomPool<Interactable> pool;
+        CustomUnityPool pool;
 
         // Такого пула нет - создаём новый пул
         if (!_pools.ContainsKey(objectTypeStr))
         {
-            pool = new CustomPool<Interactable>(interactable, 5);
+            pool = new CustomUnityPool(interactable, 5);
             _pools.Add(objectTypeStr, pool);
         }
         // Пул есть - возвращаем пул
