@@ -17,7 +17,8 @@ public class CustomUnityPool
 
     public Interactable Get()
     {
-        return _pool.Get();
+        var obj = _pool.Get();
+        return obj;
     }
 
     public void Release(Interactable obj)
@@ -25,21 +26,37 @@ public class CustomUnityPool
         _pool.Release(obj);
     }
 
+    /// <summary>
+    /// КАК уничтожаем объект
+    /// </summary>
+    /// <param name="obj"></param>
     private void OnInteractableDestroy(Interactable obj)
     {
        GameObject.Destroy(obj);
     }
 
+    /// <summary>
+    /// Что делаем с объектом когда его деактивируем
+    /// </summary>
+    /// <param name="obj"></param>
     private void OnRelease(Interactable obj)
     {
         obj.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Что делаем с объектом когда достаём его из пула
+    /// </summary>
+    /// <param name="obj"></param>
     private void OnGetInteractable(Interactable obj)
     {
         obj.gameObject.SetActive(true);
     }
 
+    /// <summary>
+    /// КАК мы создаём объект
+    /// </summary>
+    /// <returns></returns>
     private Interactable OnCreateInteractable()
     {
         return GameObject.Instantiate(_prefab);
