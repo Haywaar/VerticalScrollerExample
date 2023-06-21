@@ -14,12 +14,15 @@ namespace UI
         {
             {typeof(YouLoseDialog),"YouLoseDialog"},
             {typeof(YouWinDialog),"YouWinDialog"},
-            {typeof(SelectLevelDialog),"SelectLevelDialog"},
-            {typeof(SettingsDialog),"SettingsDialog"},
-            {typeof(CustomizeShipDialog),"CustomizeShipDialog"},
             {typeof(PurchaseItemDialog),"PurchaseItemDialog"},
             {typeof(MessageDialog),"MessageDialog"},
-            {typeof(ScoreTableDialog),"ScoreTableDialog"},
+            {typeof(LoadingDialog),"LoadingDialog"},
+            
+            {typeof(SelectLevelDialog),"MenuDialogs/SelectLevelDialog"},
+            {typeof(MenuDialog),"MenuDialogs/MenuDialog"},
+            {typeof(ScoreTableDialog),"MenuDialogs/ScoreTableDialog"},
+            {typeof(SettingsDialog),"MenuDialogs/SettingsDialog"},
+            {typeof(CustomizeShipDialog),"MenuDialogs/CustomizeShipDialog"},
         };
 
         public static void ShowWindow<T>() where T : Window

@@ -1,6 +1,7 @@
 using CustomEventBus;
 using CustomEventBus.Signals;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace UI.Dialogs
@@ -31,7 +32,7 @@ namespace UI.Dialogs
 
         private void GoToMenu()
         {
-            _eventBus.Invoke(new GoToMenuSignal());
+            SceneManager.LoadScene(StringConstants.MENU_SCENE_NAME);
         }
     }
 }

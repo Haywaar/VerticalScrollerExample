@@ -1,9 +1,13 @@
 ﻿using System.Collections;
+using ConfigLoader.Ship;
 using CustomEventBus;
 using CustomEventBus.Signals;
-using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
 using UnityEngine;
 
+/// <summary>
+/// Логика параметров самолётика:
+/// Жизнь, смерть, щиты и скорость + визуал самолётика
+/// </summary>
 public class Player : MonoBehaviour, IService
 {
     [SerializeField] private int _health = 3;
@@ -11,13 +15,10 @@ public class Player : MonoBehaviour, IService
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private GameObject _shieldObject;
 
-    private int _score;
-
     public int Health => _health;
     public float SpeedKoef => _speedKoef;
 
     private bool _isShielded = false;
-    public int Score => _score;
 
     private EventBus _eventBus;
 
@@ -26,27 +27,18 @@ public class Player : MonoBehaviour, IService
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Subscribe<PlayerDamagedSignal>(OnPlayerDamaged);
         _eventBus.Subscribe<AddHealthSignal>(OnAddHealth);
-        _eventBus.Subscribe<AddScoreSignal>(OnScoreAdded);
         _eventBus.Subscribe<AddShieldSignal>(AddShield);
         _eventBus.Subscribe<GameStartedSignal>(GameStarted);
         _eventBus.Subscribe<GameStopSignal>(GameStop);
+        _eventBus.Subscribe<AllDataLoadedSignal>(Init);
+    }
 
+    private void Init(AllDataLoadedSignal signal)
+    {
         var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
         var shipData = shipDataLoader.GetCurrentShipData();
         _spriteRenderer.sprite = shipData.ShipSprite;
         _speedKoef = shipData.MovementSpeed;
-    }
-
-    private void OnScoreAdded(AddScoreSignal signal)
-    {
-        _score += signal.Value;
-        _eventBus.Invoke(new ScoreChangedSignal(_score));
-    }
-
-    private void OnScoreAdded(int value)
-    {
-        _score += value;
-        _eventBus.Invoke(new ScoreChangedSignal(_score));
     }
 
     private void GameStarted(GameStartedSignal signal)
@@ -54,10 +46,6 @@ public class Player : MonoBehaviour, IService
         //TODO - хелс должен лежать в конфиге уровня
         _health = 3;
         _eventBus.Invoke(new HealthChangedSignal(_health));
-
-
-        _score = 0;
-        _eventBus.Invoke(new ScoreChangedSignal(_score));
     }
 
     private void OnPlayerDamaged(PlayerDamagedSignal signal)
@@ -88,7 +76,7 @@ public class Player : MonoBehaviour, IService
         //TODO - в настройки
         if (_health > 3)
         {
-            OnScoreAdded(50 * (_health - 3));
+            _eventBus.Invoke(new AddScoreSignal(50 * (_health - 3)));
             _health = 3;
         }
 
@@ -119,8 +107,6 @@ public class Player : MonoBehaviour, IService
     {
         _eventBus.Unsubscribe<PlayerDamagedSignal>(OnPlayerDamaged);
         _eventBus.Unsubscribe<AddHealthSignal>(OnAddHealth);
-
-        _eventBus.Unsubscribe<AddScoreSignal>(OnScoreAdded);
         _eventBus.Unsubscribe<AddShieldSignal>(AddShield);
 
         _eventBus.Unsubscribe<GameStartedSignal>(GameStarted);

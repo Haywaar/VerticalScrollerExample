@@ -13,93 +13,108 @@ MonoBehaviour:
   m_Name: LevelsConfig
   m_EditorClassIdentifier: 
   _levels:
-  - _id: 1
-    _levelLength: 20
-    _startSpeed: 2
-    _endSpeed: 3
-    _goldForPass: 20
-    _interactableData:
-    - _interactablePrefab: {fileID: 7086765149346311694, guid: 43297c4051ea4b044a14558db68f1b6d, type: 3}
-      _startCooldown: 2
-      _endCooldown: 1
-      prewarmTime: 0
-    - _interactablePrefab: {fileID: 6622651878194005671, guid: ee4bc1c28e210e140bacd51e906005ce, type: 3}
-      _startCooldown: 10
-      _endCooldown: 10
-      prewarmTime: 10
-    - _interactablePrefab: {fileID: 1588218241110320770, guid: 913d0b6212c43d34aba21c4fc93e563e, type: 3}
-      _startCooldown: 2
-      _endCooldown: 2
-      prewarmTime: 3
-  - _id: 0
-    _levelLength: 10
-    _startSpeed: 1
-    _endSpeed: 2
-    _goldForPass: 5
-    _interactableData:
-    - _interactablePrefab: {fileID: 7086765149346311694, guid: 43297c4051ea4b044a14558db68f1b6d, type: 3}
-      _startCooldown: 2
-      _endCooldown: 1
-      prewarmTime: 0
-    - _interactablePrefab: {fileID: 1588218241110320770, guid: 913d0b6212c43d34aba21c4fc93e563e, type: 3}
-      _startCooldown: 1.5
-      _endCooldown: 0.5
-      prewarmTime: 0
-  - _id: 2
-    _levelLength: 60
-    _startSpeed: 3
-    _endSpeed: 4
-    _goldForPass: 30
-    _interactableData:
-    - _interactablePrefab: {fileID: 1588218241110320770, guid: 913d0b6212c43d34aba21c4fc93e563e, type: 3}
-      _startCooldown: 2
-      _endCooldown: 1
-      prewarmTime: 0
-    - _interactablePrefab: {fileID: 7086765149346311694, guid: 43297c4051ea4b044a14558db68f1b6d, type: 3}
-      _startCooldown: 1
-      _endCooldown: 0.6
-      prewarmTime: 4
-    - _interactablePrefab: {fileID: 6622651878194005671, guid: ee4bc1c28e210e140bacd51e906005ce, type: 3}
-      _startCooldown: 15
-      _endCooldown: 10
-      prewarmTime: 20
-    - _interactablePrefab: {fileID: 8227008730292571054, guid: 577a3c24e4b9b0447ab9b10bbea40094, type: 3}
-      _startCooldown: 5
-      _endCooldown: 5
+  - id: 0
+    levelLength: 20
+    startSpeed: 1
+    endSpeed: 2
+    goldForPass: 5
+    interactableSpawnData:
+    - interactableType: 2
+      interactableGrade: 0
+      startCooldown: 2
+      endCooldown: 1
       prewarmTime: 5
-  - _id: 3
-    _levelLength: 90
-    _startSpeed: 4
-    _endSpeed: 5
-    _goldForPass: 40
-    _interactableData:
-    - _interactablePrefab: {fileID: 1588218241110320770, guid: 913d0b6212c43d34aba21c4fc93e563e, type: 3}
-      _startCooldown: 1.5
-      _endCooldown: 0.7
+    - interactableType: 1
+      interactableGrade: 0
+      startCooldown: 3
+      endCooldown: 2
       prewarmTime: 0
-    - _interactablePrefab: {fileID: 7086765149346311694, guid: 43297c4051ea4b044a14558db68f1b6d, type: 3}
-      _startCooldown: 0.8
-      _endCooldown: 0.4
-      prewarmTime: 3
-    - _interactablePrefab: {fileID: 6622651878194005671, guid: ee4bc1c28e210e140bacd51e906005ce, type: 3}
-      _startCooldown: 15
-      _endCooldown: 10
-      prewarmTime: 20
-  - _id: 4
-    _levelLength: 90
-    _startSpeed: 5
-    _endSpeed: 6
-    _goldForPass: 50
-    _interactableData:
-    - _interactablePrefab: {fileID: 1588218241110320770, guid: 913d0b6212c43d34aba21c4fc93e563e, type: 3}
-      _startCooldown: 1.2
-      _endCooldown: 0.6
+  - id: 1
+    levelLength: 30
+    startSpeed: 1.2
+    endSpeed: 2.2
+    goldForPass: 10
+    interactableSpawnData:
+    - interactableType: 1
+      interactableGrade: 0
+      startCooldown: 2
+      endCooldown: 1
       prewarmTime: 0
-    - _interactablePrefab: {fileID: 7086765149346311694, guid: 43297c4051ea4b044a14558db68f1b6d, type: 3}
-      _startCooldown: 0.7
-      _endCooldown: 0.3
+    - interactableType: 2
+      interactableGrade: 0
+      startCooldown: 2.2
+      endCooldown: 1.2
+      prewarmTime: 0
+  - id: 2
+    levelLength: 40
+    startSpeed: 1.4
+    endSpeed: 2.4
+    goldForPass: 15
+    interactableSpawnData:
+    - interactableType: 1
+      interactableGrade: 0
+      startCooldown: 1
+      endCooldown: 0.75
+      prewarmTime: 0
+    - interactableType: 2
+      interactableGrade: 0
+      startCooldown: 0.9
+      endCooldown: 0.65
+      prewarmTime: 2
+    - interactableType: 3
+      interactableGrade: 0
+      startCooldown: 10
+      endCooldown: 10
+      prewarmTime: 10
+  - id: 3
+    levelLength: 50
+    startSpeed: 1.6
+    endSpeed: 2.6
+    goldForPass: 20
+    interactableSpawnData:
+    - interactableType: 4
+      interactableGrade: 0
+      startCooldown: 10
+      endCooldown: 10
+      prewarmTime: 7
+    - interactableType: 3
+      interactableGrade: 0
+      startCooldown: 10
+      endCooldown: 10
+      prewarmTime: 10
+    - interactableType: 2
+      interactableGrade: 0
+      startCooldown: 0.8
+      endCooldown: 0.55
+      prewarmTime: 0
+    - interactableType: 1
+      interactableGrade: 0
+      startCooldown: 0.9
+      endCooldown: 0.65
+      prewarmTime: 0
+  - id: 4
+    levelLength: 60
+    startSpeed: 1.8
+    endSpeed: 2.8
+    goldForPass: 30
+    interactableSpawnData:
+    - interactableType: 4
+      interactableGrade: 0
+      startCooldown: 7
+      endCooldown: 7
+      prewarmTime: 7
+    - interactableType: 3
+      interactableGrade: 0
+      startCooldown: 10
+      endCooldown: 10
+      prewarmTime: 10
+    - interactableType: 2
+      interactableGrade: 0
+      startCooldown: 0.75
+      endCooldown: 0.5
       prewarmTime: 3
-    - _interactablePrefab: {fileID: 6622651878194005671, guid: ee4bc1c28e210e140bacd51e906005ce, type: 3}
-      _startCooldown: 15
-      _endCooldown: 10
-      prewarmTime: 20
+    - interactableType: 1
+      interactableGrade: 0
+      startCooldown: 0.75
+      endCooldown: 0.55
+      prewarmTime: 3

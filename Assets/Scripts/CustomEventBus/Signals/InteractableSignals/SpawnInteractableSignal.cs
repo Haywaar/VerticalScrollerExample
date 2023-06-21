@@ -7,11 +7,13 @@ namespace CustomEventBus.Signals
     /// </summary>
     public class SpawnInteractableSignal
     {
-        public readonly Interactable Interactable;
+        public readonly InteractableType InteractableType;
+        public readonly int Grade;
 
-        public SpawnInteractableSignal(Interactable interactable)
+        public SpawnInteractableSignal(InteractableType type, int grade)
         {
-            Interactable = interactable;
+            InteractableType = type;
+            Grade = grade;
         }
     }
 }

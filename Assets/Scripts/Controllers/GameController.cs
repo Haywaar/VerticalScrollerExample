@@ -1,34 +1,27 @@
 ﻿using CustomEventBus;
 using CustomEventBus.Signals;
-using DefaultNamespace;
 using UI;
 using UI.Dialogs;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Переключает состояние игры: игра/меню/окна и тд
+/// Принимает решение о запуске и остановке игры
+/// Уведомляет о старте/конце игры
 /// </summary>
-public class GameController : MonoBehaviour, IService
+public class GameController : IService, IDisposable
 {
     private EventBus _eventBus;
 
-    private void Start()
+    public GameController()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
 
         _eventBus.Subscribe<PlayerDeadSignal>(OnPlayerDead);
         _eventBus.Subscribe<LevelFinishedSignal>(LevelFinished);
-        _eventBus.Subscribe<GoToMenuSignal>(GoToMenu);
-    }
+        _eventBus.Subscribe<SetLevelSignal>(StartGame, -1);
 
-    private void OnPlayerDead(PlayerDeadSignal signal)
-    {
-        StopGame();
-        WindowManager.ShowWindow<YouLoseDialog>();
     }
-
-    public void StartGame()
+    
+    public void StartGame(SetLevelSignal signal)
     {
         _eventBus.Invoke(new GameStartedSignal());
     }
@@ -38,42 +31,27 @@ public class GameController : MonoBehaviour, IService
         _eventBus.Invoke(new GameStopSignal());
     }
 
+    private void OnPlayerDead(PlayerDeadSignal signal)
+    {
+        StopGame();
+        WindowManager.ShowWindow<YouLoseDialog>();
+    }
+
     private void LevelFinished(LevelFinishedSignal signal)
     {
         var level = signal.Level;
 
         StopGame();
-        _eventBus.Invoke(new AddGoldSignal(level.GoldForPass));
 
-        var player = ServiceLocator.Current.Get<Player>();
-        var score = player.Score;
-
-
-        var maxScore = PlayerPrefs.GetInt(StringConstants.MAX_LEVEL_SCORE + level.ID, 0);
-        if (score > maxScore)
-        {
-            PlayerPrefs.SetInt(StringConstants.MAX_LEVEL_SCORE + level.ID, score);
-        }
-
+        // Показываем окошко о победе
+        var scoreController = ServiceLocator.Current.Get<ScoreController>();
         var youWinDialog = WindowManager.GetWindow<YouWinDialog>();
-        youWinDialog.Init(score, maxScore, level.GoldForPass);
+        youWinDialog.Init(scoreController.Score, scoreController.GetMaxScore(level.ID), level.GoldForPass);
     }
 
-
-    private void GoToMenu(GoToMenuSignal signal)
-    {
-        GoToMenu();
-    }
-
-    private void GoToMenu()
-    {
-        SceneManager.LoadScene(StringConstants.MENU_SCENE_NAME);
-    }
-
-    private void OnDestroy()
+    public void Dispose()
     {
         _eventBus.Unsubscribe<PlayerDeadSignal>(OnPlayerDead);
         _eventBus.Unsubscribe<LevelFinishedSignal>(LevelFinished);
-        _eventBus.Unsubscribe<GoToMenuSignal>(GoToMenu);
     }
 }

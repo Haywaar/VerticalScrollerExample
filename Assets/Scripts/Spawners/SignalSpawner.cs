@@ -6,7 +6,8 @@ using Interactables;
 using UnityEngine;
 
 /// <summary>
-/// Крутит таймеры и отправляет сигналы на спавн разных сущностей
+/// Крутит таймеры, отправляет сигналы на спавн сущностей
+/// Также отправляет сигнал когда время уровня закончилось
 /// </summary>
 public class SignalSpawner : MonoBehaviour, IService
 {
@@ -44,21 +45,21 @@ public class SignalSpawner : MonoBehaviour, IService
             SpawnInteractable(interactableData);
         }
 
-        TrackTime();
+        TrackLevelProgress();
     }
 
-    private async UniTask SpawnInteractable(InteractableData interactableData)
+    private async UniTask SpawnInteractable(InteractableSpawnData interactableSpawnData)
     {
-        var cooldown = interactableData.StartCooldown;
+        var cooldown = interactableSpawnData.StartCooldown;
 
-        await UniTask.Delay(TimeSpan.FromSeconds(interactableData.PrewarmTime));
+        await UniTask.Delay(TimeSpan.FromSeconds(interactableSpawnData.PrewarmTime));
         while (_isLevelRunning)
         {
-            _eventBus.Invoke(new SpawnInteractableSignal(interactableData.InteractablePrefab));
+            _eventBus.Invoke(new SpawnInteractableSignal(interactableSpawnData.InteractableType, interactableSpawnData.InteractableGrade));
 
             await UniTask.Delay(TimeSpan.FromSeconds(cooldown));
-            cooldown = Mathf.Lerp(interactableData.StartCooldown,
-                interactableData.EndCooldown, (_curTime / _level.LevelLength));
+            cooldown = Mathf.Lerp(interactableSpawnData.StartCooldown,
+                interactableSpawnData.EndCooldown, (_curTime / _level.LevelLength));
         }
     }
 
@@ -67,7 +68,7 @@ public class SignalSpawner : MonoBehaviour, IService
         _isLevelRunning = false;
     }
 
-    private async UniTask TrackTime()
+    private async UniTask TrackLevelProgress()
     {
         while (_isLevelRunning)
         {

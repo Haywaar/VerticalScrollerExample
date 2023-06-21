@@ -1,34 +1,41 @@
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Interactables
 {
    [System.Serializable]
-   public class InteractableData
+   public class InteractableSpawnData
    {
-      [SerializeField] private Interactable _interactablePrefab;
-      [SerializeField] private float _startCooldown;
-      [SerializeField] private float _endCooldown;
+      [JsonProperty]
+      [SerializeField] private InteractableType interactableType;
+      
+      [JsonProperty]
+      [SerializeField] private int interactableGrade;
+      
+      [JsonProperty]
+      [SerializeField] private float startCooldown;
+      
+      [JsonProperty]
+      [SerializeField] private float endCooldown;
+      
+      [JsonProperty]
       [SerializeField] private float prewarmTime;
 
-   
-      /// <summary>
-      /// Ссылка на монобех префаб, который мы будем создавать
-      /// </summary>
-      public Interactable InteractablePrefab => _interactablePrefab;
+      public InteractableType InteractableType => interactableType;
+      public int InteractableGrade => interactableGrade;
       /// <summary>
       /// КД появления объектов в начале уровня
       /// </summary>
-      public float StartCooldown => _startCooldown;
+      public float StartCooldown => startCooldown;
       /// <summary>
       /// КД появления объектов в конце уровня
       /// </summary>
-      public float EndCooldown => _endCooldown;
+      public float EndCooldown => endCooldown;
       /// <summary>
       /// Время до первого появления объекта
       /// Если prewarm = 10, то первый объект появится через 10 секунд
       /// А дальше по КД
       /// </summary>
       public float PrewarmTime => prewarmTime;
-
    }
 }

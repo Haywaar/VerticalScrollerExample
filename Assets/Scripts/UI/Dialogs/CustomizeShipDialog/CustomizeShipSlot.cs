@@ -1,7 +1,6 @@
 ﻿using System;
 using CustomEventBus;
 using CustomEventBus.Signals;
-using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.UI;
 

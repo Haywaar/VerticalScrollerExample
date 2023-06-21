@@ -8,7 +8,7 @@ using UnityEngine;
 /// Передвигает все Interactable на экране
 /// Выключает их если объекты вышли за пределы экрана
 /// </summary>
-public class MovementController : MonoBehaviour, IService
+public class InteractableMover : MonoBehaviour, IService
 {
     [SerializeField] private float _speedKoef;
 

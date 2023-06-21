@@ -1,0 +1,133 @@
+[
+  {
+    "comment": "Первый уровень",
+    "id": 0,
+    "levelLength": 20,
+    "startSpeed": 1,
+    "endSpeed": 2,
+    "goldForPass": 10,
+    "interactableSpawnData": [
+      {
+        "interactableType": "DAMAGE_MINE",
+        "interactableGrade": 0,
+        "startCooldown": 3,
+        "endCooldown": 1,
+        "prewarmTime": 2
+      },
+      {
+        "interactableType": "GOLD",
+        "interactableGrade": 0,
+        "startCooldown": 4,
+        "endCooldown": 2,
+        "prewarmTime": 5
+      }
+    ]
+  },
+  {
+    "comment": "Второй уровень",
+    "id": 1,
+    "levelLength": 30,
+    "startSpeed": 1.5,
+    "endSpeed": 2.5,
+    "goldForPass": 20,
+    "interactableSpawnData": [
+      {
+        "interactableType": "DAMAGE_MINE",
+        "interactableGrade": 0,
+        "startCooldown": 2,
+        "endCooldown": 1,
+        "prewarmTime": 2
+      },
+      {
+        "interactableType": "GOLD",
+        "interactableGrade": 0,
+        "startCooldown": 2,
+        "endCooldown": 1,
+        "prewarmTime": 5
+      },
+      {
+        "interactableType": "HEALTH_KIT",
+        "interactableGrade": 0,
+        "startCooldown": 4,
+        "endCooldown": 2,
+        "prewarmTime": 5
+      }
+    ]
+  },
+  {
+    "comment": "Третий уровень",
+    "id": 2,
+    "levelLength": 45,
+    "startSpeed": 2,
+    "endSpeed": 3,
+    "goldForPass": 30,
+    "interactableSpawnData": [
+      {
+        "interactableType": "DAMAGE_MINE",
+        "interactableGrade": 0,
+        "startCooldown": 1,
+        "endCooldown": 0.75,
+        "prewarmTime": 3
+      },
+      {
+        "interactableType": "GOLD",
+        "interactableGrade": 0,
+        "startCooldown": 1.8,
+        "endCooldown": 0.9,
+        "prewarmTime": 5
+      },
+      {
+        "interactableType": "HEALTH_KIT",
+        "interactableGrade": 0,
+        "startCooldown": 20,
+        "endCooldown": 20,
+        "prewarmTime": 5
+      },
+      {
+        "interactableType": "SHIELD",
+        "interactableGrade": 0,
+        "startCooldown": 10,
+        "endCooldown": 10,
+        "prewarmTime": 5
+      }
+    ]
+  },
+  {
+    "comment": "Четвёртый уровень",
+    "id": 3,
+    "levelLength": 50,
+    "startSpeed": 3,
+    "endSpeed": 5,
+    "goldForPass": 40,
+    "interactableSpawnData": [
+      {
+        "interactableType": "DAMAGE_MINE",
+        "interactableGrade": 0,
+        "startCooldown": 0.9,
+        "endCooldown": 0.65,
+        "prewarmTime": 3
+      },
+      {
+        "interactableType": "GOLD",
+        "interactableGrade": 0,
+        "startCooldown": 1.7,
+        "endCooldown": 0.8,
+        "prewarmTime": 5
+      },
+      {
+        "interactableType": "HEALTH_KIT",
+        "interactableGrade": 0,
+        "startCooldown": 20,
+        "endCooldown": 20,
+        "prewarmTime": 10
+      },
+      {
+        "interactableType": "SHIELD",
+        "interactableGrade": 0,
+        "startCooldown": 10,
+        "endCooldown": 10,
+        "prewarmTime": 10
+      }
+    ]
+  }
+]

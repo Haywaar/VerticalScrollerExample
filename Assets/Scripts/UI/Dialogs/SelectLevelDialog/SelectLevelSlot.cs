@@ -1,5 +1,4 @@
-﻿using DefaultNamespace;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -24,7 +23,8 @@ namespace UI.Dialogs
 
             _levelText.text = (level.ID + 1).ToString();
 
-            _maxScoreText.text = "Max score:" + PlayerPrefs.GetInt(StringConstants.MAX_LEVEL_SCORE + level.ID, 0);
+            var scoreController = ServiceLocator.Current.Get<ScoreController>();
+            _maxScoreText.text = "Max score:" + scoreController.GetMaxScore(level.ID);
         }
     }
 }

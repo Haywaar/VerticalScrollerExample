@@ -1,9 +1,12 @@
 ﻿using CustomEventBus;
 using CustomEventBus.Signals;
-using DefaultNamespace;
 using UnityEngine;
 
-public class GoldController : IService
+/// <summary>
+/// Система отвечающая за золото:
+/// Начисление, трата, изменение золота
+/// </summary>
+public class GoldController : IService, IDisposable
 {
     private int _gold;
     public int Gold => _gold;
@@ -19,11 +22,17 @@ public class GoldController : IService
         _eventBus.Subscribe<AddGoldSignal>(OnAddGold);
         _eventBus.Subscribe<SpendGoldSignal>(SpendGold);
         _eventBus.Subscribe<GoldChangedSignal>(GoldChanged);
+        _eventBus.Subscribe<LevelFinishedSignal>(LevelFinished);
     }
 
     private void OnAddGold(AddGoldSignal signal)
     {
-        _gold += signal.Value;
+        OnAddGold(signal.Value);
+    }
+    
+    private void OnAddGold(int value)
+    {
+        _gold += value;
         _eventBus.Invoke(new GoldChangedSignal(_gold));
     }
 
@@ -44,5 +53,18 @@ public class GoldController : IService
     private void GoldChanged(GoldChangedSignal signal)
     {
         PlayerPrefs.SetInt(StringConstants.GOLD, signal.Gold);
+    }
+
+    private void LevelFinished(LevelFinishedSignal signal)
+    {
+        OnAddGold(signal.Level.GoldForPass);
+    }
+
+    public void Dispose()
+    {
+        _eventBus.Unsubscribe<AddGoldSignal>(OnAddGold);
+        _eventBus.Unsubscribe<SpendGoldSignal>(SpendGold);
+        _eventBus.Unsubscribe<GoldChangedSignal>(GoldChanged);
+        _eventBus.Unsubscribe<LevelFinishedSignal>(LevelFinished);
     }
 }

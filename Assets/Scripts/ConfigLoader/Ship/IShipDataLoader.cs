@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Examples.VerticalScrollerExample.Scripts.Ship;
 
-namespace Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader
+namespace ConfigLoader.Ship
 {
-    public interface IShipDataLoader : IService
+    public interface IShipDataLoader : IService, ILoader
     {
         public IEnumerable<ShipData> GetShipsData();
         public ShipData GetCurrentShipData();

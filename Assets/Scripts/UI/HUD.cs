@@ -1,6 +1,5 @@
 using CustomEventBus;
 using CustomEventBus.Signals;
-using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;

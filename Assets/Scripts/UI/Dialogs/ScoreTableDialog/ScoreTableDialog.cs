@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using DefaultNamespace;
-using Examples.VerticalScrollerExample;
 using UnityEngine;
 
 namespace UI.Dialogs
@@ -12,10 +10,12 @@ namespace UI.Dialogs
 
         public void Init(IEnumerable<Level> levels)
         {
+            var scoreController = ServiceLocator.Current.Get<ScoreController>();
+            
             foreach (var level in levels)
             {
                 var slot = GameObject.Instantiate(_slotPrefab, _parent);
-                var score = PlayerPrefs.GetInt(StringConstants.MAX_LEVEL_SCORE + level.ID, 0);
+                var score = scoreController.GetMaxScore(level.ID);
                 slot.Init((level.ID + 1), score);
             }
         }

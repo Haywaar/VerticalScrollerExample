@@ -1,36 +1,46 @@
 ﻿using System.Collections.Generic;
 using Interactables;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
 public class Level
 {
-    [SerializeField] private int _id;
-
+    /// <summary>
+    /// Уникальный ID уровня
+    /// </summary>
+    [JsonProperty]
+    [SerializeField] private int id;
     /// <summary>
     /// Длительность уровня в секундах
     /// </summary>
-    [SerializeField] private float _levelLength;
-
-    [SerializeField] private float _startSpeed;
-    [SerializeField] private float _endSpeed;
-
-    public float StartSpeed => _startSpeed;
-
-    public float EndSpeed => _endSpeed;
-
+    [JsonProperty]
+    [SerializeField] private float levelLength;
+    /// <summary>
+    /// Стартовая скорость падения препятствий и бонусов
+    /// </summary>
+    [JsonProperty]
+    [SerializeField] private float startSpeed;
+    /// <summary>
+    /// Финальная скорость падения препятствий и бонусов
+    /// </summary>
+    [JsonProperty]
+    [SerializeField] private float endSpeed;
     /// <summary>
     /// Количество голды за первое прохождение
     /// </summary>
-    [SerializeField] private int _goldForPass;
-
+    [JsonProperty]
+    [SerializeField] private int goldForPass;
     /// <summary>
     /// Инфа о спавне препятствий и бонусов
     /// </summary>
-    [SerializeField] private List<InteractableData> _interactableData;
-
-    public int ID => _id;
-    public float LevelLength => _levelLength;
-    public int GoldForPass => _goldForPass;
-    public List<InteractableData> InteractableData => _interactableData;
+    [JsonProperty]
+    [SerializeField] private List<InteractableSpawnData> interactableSpawnData;
+   
+    public int ID => id;
+    public float LevelLength => levelLength;
+    public float StartSpeed => startSpeed;
+    public float EndSpeed => endSpeed;
+    public int GoldForPass => goldForPass;
+    public List<InteractableSpawnData> InteractableData => interactableSpawnData;
 }

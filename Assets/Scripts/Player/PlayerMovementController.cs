@@ -2,6 +2,9 @@
 using CustomEventBus.Signals;
 using UnityEngine;
 
+/// <summary>
+/// Обработка UserInput для передвижения игрока
+/// </summary>
 public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private Player _player;

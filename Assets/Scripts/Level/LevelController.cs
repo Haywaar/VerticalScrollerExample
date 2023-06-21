@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using CustomEventBus;
 using CustomEventBus.Signals;
-using DefaultNamespace;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-
 /// <summary>
-/// Отвечает за логику уровней
+/// Отвечает за логику уровней:
+/// Переключает текущий уровень на другой
+/// Уведомляет остальные системы что уровень изменился
+/// Уведомляет что уровень пройден
 /// </summary>
 public class LevelController : MonoBehaviour
 {
@@ -19,16 +21,25 @@ public class LevelController : MonoBehaviour
     private void Start()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-        _eventBus.Subscribe<LevelTimePassedSignal>(LevelFinished);
-        _eventBus.Subscribe<StartLevelSignal>(StartLevel);
+        _eventBus.Subscribe<LevelTimePassedSignal>(LevelPassed);
         _eventBus.Subscribe<NextLevelSignal>(NextLevel);
 
         _levelLoader = ServiceLocator.Current.Get<ILevelLoader>();
         _currentLevelId = PlayerPrefs.GetInt(StringConstants.CURRENT_LEVEL, 0);
 
+        OnStart();
+    }
+
+    private async void OnStart()
+    {
+        await UniTask.WaitUntil(_levelLoader.IsLoaded);
         _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
+        if (_currentLevel == null)
+        {
+            Debug.LogErrorFormat("Can't find level with id {0}", _currentLevelId);
+            return;
+        }
         _eventBus.Invoke(new SetLevelSignal(_currentLevel));
-        StartLevel();
     }
 
     private void NextLevel(NextLevelSignal signal)
@@ -41,23 +52,10 @@ public class LevelController : MonoBehaviour
     {
         _currentLevelId = level;
         _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
-
         _eventBus.Invoke(new SetLevelSignal(_currentLevel));
-        StartLevel();
     }
 
-
-    private void StartLevel(StartLevelSignal signal)
-    {
-        StartLevel();
-    }
-
-    private void StartLevel()
-    {
-        ServiceLocator.Current.Get<GameController>().StartGame();
-    }
-
-    private void LevelFinished(LevelTimePassedSignal signal)
+    private void LevelPassed(LevelTimePassedSignal signal)
     {
         var player = ServiceLocator.Current.Get<Player>();
         if (player.Health > 0)
@@ -69,9 +67,7 @@ public class LevelController : MonoBehaviour
 
     private void OnDestroy()
     {
-        _eventBus.Unsubscribe<StartLevelSignal>(StartLevel);
         _eventBus.Unsubscribe<NextLevelSignal>(NextLevel);
-
-        _eventBus.Unsubscribe<LevelTimePassedSignal>(LevelFinished);
+        _eventBus.Unsubscribe<LevelTimePassedSignal>(LevelPassed);
     }
 }

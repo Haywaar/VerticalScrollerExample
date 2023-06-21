@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using ConfigLoader.Ship;
 using CustomEventBus;
 using CustomEventBus.Signals;
-using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,9 +20,12 @@ namespace UI
         private void Start()
         {
             _eventBus = ServiceLocator.Current.Get<EventBus>();
-            
             _eventBus.Subscribe<HealthChangedSignal>(DisplayHealth);
-            
+            _eventBus.Subscribe<AllDataLoadedSignal>(Init);
+        }
+
+        private void Init(AllDataLoadedSignal signal)
+        {
             var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
             var curShipData = shipDataLoader.GetCurrentShipData();
             var sprite = curShipData.ShipSprite;

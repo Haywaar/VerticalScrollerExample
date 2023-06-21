@@ -3,11 +3,14 @@ using CustomEventBus;
 using CustomEventBus.Signals;
 using UnityEngine;
 
-public class TileController : MonoBehaviour
+/// <summary>
+/// Логика передвижения заднего фона
+/// </summary>
+public class TileMover : MonoBehaviour
 {
     [SerializeField] private List<TileData> _tiles;
     
-    private MovementController _movementController;
+    private InteractableMover _interactableMover;
     private float _speedKoef;
 
     private bool _isRunning;
@@ -20,7 +23,7 @@ public class TileController : MonoBehaviour
         _eventBus.Subscribe<GameStartedSignal>(OnGameStart);
         _eventBus.Subscribe<GameStopSignal>(OnGameStop);
         
-        _movementController = ServiceLocator.Current.Get<MovementController>();
+        _interactableMover = ServiceLocator.Current.Get<InteractableMover>();
     }
 
     private void OnGameStart(GameStartedSignal signal)
@@ -38,7 +41,7 @@ public class TileController : MonoBehaviour
         if(!_isRunning)
             return;
         
-        _speedKoef = _movementController.SpeedKoef;
+        _speedKoef = _interactableMover.SpeedKoef;
         foreach (var tile in _tiles)
         {
            tile.Move(_speedKoef);

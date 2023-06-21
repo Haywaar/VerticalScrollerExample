@@ -16,7 +16,8 @@ public class InteractablesSpawner : MonoBehaviour, IService
     [SerializeField] private float _minX;
     [SerializeField] private float _maxX;
     [SerializeField] private float _defaultY;
-
+    [SerializeField] private InteractableConfig _config;
+    
     public float MinX => _minX;
     public float MaxX => _maxX;
 
@@ -35,7 +36,8 @@ public class InteractablesSpawner : MonoBehaviour, IService
 
     private void Spawn(SpawnInteractableSignal signal)
     {
-        var pool = GetPool(signal.Interactable);
+        var interactable = _config.Get(signal.InteractableType, signal.Grade);
+        var pool = GetPool(interactable);
 
         var item = pool.Get();
         item.transform.parent = _parent;

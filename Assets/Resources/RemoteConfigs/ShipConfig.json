@@ -1,0 +1,20 @@
+[
+  {
+    "id": 0,
+    "movementSpeed": 3,
+    "purchasePrice": 0,
+    "shipSprite": "plane_2"
+  },
+  {
+    "id": 1,
+    "movementSpeed": 5,
+    "purchasePrice": 6,
+    "shipSprite": "plane_3"
+  },
+  {
+    "id": 2,
+    "movementSpeed": 7,
+    "purchasePrice": 9,
+    "shipSprite": "plane_4"
+  }
+]

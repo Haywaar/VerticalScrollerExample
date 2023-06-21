@@ -1,8 +1,7 @@
 using System.Linq;
+using ConfigLoader.Ship;
 using CustomEventBus;
 using CustomEventBus.Signals;
-using DefaultNamespace;
-using Examples.VerticalScrollerExample.Scripts.Ship.ShipDataLoader;
 using UnityEngine;
 using UnityEngine.UI;
 
