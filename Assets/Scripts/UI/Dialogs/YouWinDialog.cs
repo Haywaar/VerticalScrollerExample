@@ -9,7 +9,7 @@ namespace UI.Dialogs
     /// <summary>
     /// Окошко при прохождении уровня игроком
     /// </summary>
-    public class YouWinDialog : Window
+    public class YouWinDialog : Dialog
     {
         [SerializeField] private Button _nextLevelButton;
         [SerializeField] private Button _goToMenuButton;

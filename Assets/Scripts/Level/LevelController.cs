@@ -10,7 +10,7 @@ using UnityEngine;
 /// Уведомляет остальные системы что уровень изменился
 /// Уведомляет что уровень пройден
 /// </summary>
-public class LevelController : MonoBehaviour
+public class LevelController : MonoBehaviour, IService
 {
     private ILevelLoader _levelLoader;
     private int _currentLevelId;
@@ -18,7 +18,7 @@ public class LevelController : MonoBehaviour
 
     private EventBus _eventBus;
 
-    private void Start()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Subscribe<LevelTimePassedSignal>(LevelPassed);
@@ -27,10 +27,10 @@ public class LevelController : MonoBehaviour
         _levelLoader = ServiceLocator.Current.Get<ILevelLoader>();
         _currentLevelId = PlayerPrefs.GetInt(StringConstants.CURRENT_LEVEL, 0);
 
-        OnStart();
+        OnInit();
     }
 
-    private async void OnStart()
+    private async void OnInit()
     {
         await UniTask.WaitUntil(_levelLoader.IsLoaded);
         _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);

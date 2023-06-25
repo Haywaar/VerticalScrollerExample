@@ -22,7 +22,6 @@ namespace UI
         private void Start()
         {
             _eventBus = ServiceLocator.Current.Get<EventBus>();
-        
             _eventBus.Subscribe<SetLevelSignal>(RedrawLevel);
             _eventBus.Subscribe<ScoreChangedSignal>(RedrawScore);
             _eventBus.Subscribe<LevelProgressChangedSignal>(RedrawLevelProgress);

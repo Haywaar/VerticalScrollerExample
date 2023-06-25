@@ -10,69 +10,73 @@ namespace Examples.VerticalScrollerExample
 {
     public class ServiceLocatorLoader_Menu : MonoBehaviour
     {
-        //[SerializeField] private ScriptableObjectLevelLoader _levelLoader;
         [SerializeField] private GUIHolder _guiHolder;
+
+        [SerializeField] private ScriptableObjectLevelLoader _scriptableObjectLevelLoader;
+        [SerializeField] private ScriptableObjectShipLoader _scriptableObjectShipLoader;
+        private ConfigDataLoader _configDataLoader;
+        [SerializeField] private bool _loadFromJSON;
         
-        [SerializeField] private ScriptableObjectShipLoader _shipLoaderSO;
-        [SerializeField] private ScriptableObjectLevelLoader _levelLoaderSO;
-        
-        [SerializeField] private ConfigDataLoader _configDataLoader;
-        
+        private EventBus _eventBus;
         private GoldController _goldController;
         private ScoreController _scoreController;
+
+        private ILevelLoader _levelLoader;
+        private IShipDataLoader _shipDataLoader;
 
         private List<IDisposable> _disposables = new List<IDisposable>();
 
         private void Awake()
         {
-            ServiceLocator.Initialize();
-
-            var eventBus = new EventBus();
-            ServiceLocator.Current.Register(eventBus);
-            ServiceLocator.Current.Register<GUIHolder>(_guiHolder);
-
-            InitJSONLoaders();
-          //  InitLocalLoaders();
-
+            _eventBus = new EventBus();
             _goldController = new GoldController();
-            ServiceLocator.Current.Register(_goldController);
-            _disposables.Add(_goldController);
-
             _scoreController = new ScoreController();
+            
+            if (_loadFromJSON)
+            {
+                _levelLoader = new JsonLevelLoader("LevelConfig.json");
+                _shipDataLoader = new JsonShipLoader("ShipConfig.json");
+            }
+            else
+            {
+                _levelLoader = _scriptableObjectLevelLoader;
+                _shipDataLoader = _scriptableObjectShipLoader;
+            }
+            
+            Register();
+            Init();
+            AddToDisposables();
+        }
+
+
+        private void Init()
+        {
+            _goldController.Init();
+            _scoreController.Init();
+            
+            var loaders = new List<ILoader>();
+            loaders.Add(_levelLoader);
+            loaders.Add(_shipDataLoader);
+            _configDataLoader = new ConfigDataLoader();
+            _configDataLoader.Init(loaders);
+        }
+
+        private void Register()
+        {
+            ServiceLocator.Initialize();
+            ServiceLocator.Current.Register(_goldController);
             ServiceLocator.Current.Register(_scoreController);
+            ServiceLocator.Current.Register(_eventBus);
+            ServiceLocator.Current.Register<GUIHolder>(_guiHolder);
+            
+            ServiceLocator.Current.Register<ILevelLoader>(_levelLoader);
+            ServiceLocator.Current.Register<IShipDataLoader>(_shipDataLoader);
+        }
+
+        private void AddToDisposables()
+        {
+            _disposables.Add(_goldController);
             _disposables.Add(_scoreController);
-        }
-
-        
-        // Для демонстрации подгрузки из JSON-ов
-        private void InitJSONLoaders()
-        {
-            var shipLoader = new JsonShipLoader("ShipConfig.json");
-            var levelLoader = new JsonLevelLoader("LevelConfig.json");
-
-            ServiceLocator.Current.Register<ILevelLoader>(levelLoader);
-            ServiceLocator.Current.Register<IShipDataLoader>(shipLoader);
-
-            var loaders = new List<ILoader>();
-            loaders.Add(levelLoader);
-            loaders.Add(shipLoader);
-
-            _configDataLoader.Init(loaders);
-            ServiceLocator.Current.Register(_configDataLoader);
-        }
-
-        // Для демонстрации подгрузки из SO
-        private void InitLocalLoaders()
-        {
-            ServiceLocator.Current.Register<IShipDataLoader>(_shipLoaderSO);
-            ServiceLocator.Current.Register<ILevelLoader>(_levelLoaderSO);
-            
-            var loaders = new List<ILoader>();
-            loaders.Add(_levelLoaderSO);
-            loaders.Add(_shipLoaderSO);
-            
-            _configDataLoader.Init(loaders);
-            ServiceLocator.Current.Register(_configDataLoader);
         }
 
         private void OnDestroy()

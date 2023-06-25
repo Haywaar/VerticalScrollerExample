@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace UI.Dialogs
 {
-    public class MessageDialog : Window
+    public class MessageDialog : Dialog
     {
         [SerializeField] private Text _messageText;
         [SerializeField] private Button _okButton;

@@ -8,7 +8,7 @@ namespace UI.Dialogs
     /// <summary>
     /// Окно меню (используется на титульной сцене)
     /// </summary>
-    public class MenuDialog : Window
+    public class MenuDialog : Dialog
     {
         [SerializeField] private Button _playButton;
         [SerializeField] private Button _selectLevelButton;
@@ -34,25 +34,25 @@ namespace UI.Dialogs
 
         private void OnSelectLevelButtonClick()
         {
-            WindowManager.ShowWindow<SelectLevelDialog>();
+            DialogManager.ShowDialog<SelectLevelDialog>();
         }
     
         private void OnCustomizeShipButtonClick()
         {
-            WindowManager.ShowWindow<CustomizeShipDialog>();
+            DialogManager.ShowDialog<CustomizeShipDialog>();
         }
     
         private void OnHighscoreButtonClick()
         {
             var levelLoader = ServiceLocator.Current.Get<ILevelLoader>();
             var levels = levelLoader.GetLevels().OrderBy(x => x.ID).ToList();
-            var scoreTableDialog = WindowManager.GetWindow<ScoreTableDialog>();
+            var scoreTableDialog = DialogManager.GetDialog<ScoreTableDialog>();
             scoreTableDialog.Init(levels);
         }
     
         private void OnSettingsButtonClick()
         {
-            WindowManager.ShowWindow<SettingsDialog>();
+            DialogManager.ShowDialog<SettingsDialog>();
         }
     }
 }

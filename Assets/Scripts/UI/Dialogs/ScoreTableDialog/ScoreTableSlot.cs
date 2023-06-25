@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace UI.Dialogs
 {
-    public class ScoreTableSlot: Window
+    public class ScoreTableSlot: Dialog
     {
         [SerializeField] private Text _levelText;
         [SerializeField] private Text _levelScoreText;

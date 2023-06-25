@@ -22,7 +22,7 @@ public class Player : MonoBehaviour, IService
 
     private EventBus _eventBus;
 
-    private void Start()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Subscribe<PlayerDamagedSignal>(OnPlayerDamaged);
@@ -30,10 +30,10 @@ public class Player : MonoBehaviour, IService
         _eventBus.Subscribe<AddShieldSignal>(AddShield);
         _eventBus.Subscribe<GameStartedSignal>(GameStarted);
         _eventBus.Subscribe<GameStopSignal>(GameStop);
-        _eventBus.Subscribe<AllDataLoadedSignal>(Init);
+        _eventBus.Subscribe<AllDataLoadedSignal>(OnDataLoaded);
     }
 
-    private void Init(AllDataLoadedSignal signal)
+    private void OnDataLoaded(AllDataLoadedSignal signal)
     {
         var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
         var shipData = shipDataLoader.GetCurrentShipData();

@@ -9,7 +9,7 @@ namespace UI.Dialogs
     /// Окошко "Идёт загрузка"
     /// при поступлении сигнала AllResourcesLoaded исчезает
     /// </summary>
-    public class LoadingDialog : Window
+    public class LoadingDialog : Dialog
     {
         [SerializeField] private Text _progressText;
         

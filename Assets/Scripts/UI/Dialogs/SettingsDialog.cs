@@ -6,7 +6,7 @@ namespace UI.Dialogs
    /// <summary>
    /// Окно настроек(звуки, сброс PlayerPrefs и прочее)
    /// </summary>
-   public class SettingsDialog : Window
+   public class SettingsDialog : Dialog
    {
       [SerializeField] private Toggle _soundOn;
       [SerializeField] private Button _resetPlayerPrefsButton;

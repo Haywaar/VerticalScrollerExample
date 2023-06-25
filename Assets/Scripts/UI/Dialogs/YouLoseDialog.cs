@@ -9,7 +9,7 @@ namespace UI.Dialogs
     /// <summary>
     /// Окошко, отображающееся при проигрыше
     /// </summary>
-    public class YouLoseDialog : Window
+    public class YouLoseDialog : Dialog
     {
         [SerializeField] private Button _tryAgainButton;
         [SerializeField] private Button _goToMenuButton;

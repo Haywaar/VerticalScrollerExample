@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UI
 {
-    public class WindowManager
+    public class DialogManager
     {
         private const string PrefabsFilePath = "Dialogs/";
         
@@ -25,20 +25,20 @@ namespace UI
             {typeof(CustomizeShipDialog),"MenuDialogs/CustomizeShipDialog"},
         };
 
-        public static void ShowWindow<T>() where T : Window
+        public static void ShowDialog<T>() where T : Dialog
         {
-            CreateWindow<T>();
+            CreateDialog<T>();
         }
 
-        public static T GetWindow<T>() where T : Window
+        public static T GetDialog<T>() where T : Dialog
         {
-            var obj = CreateWindow<T>();
+            var obj = CreateDialog<T>();
             var component = obj.GetComponent<T>();
         
             return component;
         }
         
-        private static GameObject CreateWindow<T>() where T : Window
+        private static GameObject CreateDialog<T>() where T : Dialog
         {
             var go = GetPrefabByType<T>();
             if (go == null)
@@ -50,7 +50,7 @@ namespace UI
             return GameObject.Instantiate(go, GuiHolder);
         }
 
-        private static GameObject GetPrefabByType<T>() where T : Window
+        private static GameObject GetPrefabByType<T>() where T : Dialog
         {
             var prefabName =  PrefabsDictionary[typeof(T)];
             if (string.IsNullOrEmpty(prefabName))

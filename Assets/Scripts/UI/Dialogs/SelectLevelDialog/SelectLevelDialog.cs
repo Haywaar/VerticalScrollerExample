@@ -9,7 +9,7 @@ namespace UI.Dialogs
     /// <summary>
     /// Окно выбора уровня
     /// </summary>
-    public class SelectLevelDialog : Window
+    public class SelectLevelDialog : Dialog
     {
         [SerializeField] private GridLayoutGroup _levelsGrid;
         [SerializeField] private SelectLevelSlot _levelSlotPrefab;

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public abstract class Window : MonoBehaviour
+    public abstract class Dialog : MonoBehaviour
     {
         [SerializeField] private Button _outsideClickArea;
 

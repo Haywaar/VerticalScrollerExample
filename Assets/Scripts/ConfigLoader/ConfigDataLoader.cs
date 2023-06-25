@@ -12,7 +12,7 @@ using UnityEngine;
 /// Когда ВСЕ конфиги и ресурсы загружены, данный класс отправит ивент
 /// Что игра готова AllDataLoadedSignal
 /// </summary>
-public class ConfigDataLoader : MonoBehaviour, IService
+public class ConfigDataLoader : IService
 {
     private List<ILoader> _loaders;
     private EventBus _eventBus;
@@ -21,14 +21,7 @@ public class ConfigDataLoader : MonoBehaviour, IService
     public void Init(List<ILoader> loaders)
     {
         _loaders = loaders;
-    }
-
-    /// <summary>
-    /// Вообще Start нужен для синхронизации
-    /// Чтобы загрузчик начал загружать ПОСЛЕ всех подписок
-    /// </summary>
-    private void Start()
-    {
+        
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Subscribe<DataLoadedSignal>(OnConfigLoaded);
         
@@ -36,7 +29,7 @@ public class ConfigDataLoader : MonoBehaviour, IService
         // придётся показать экран Please Wait
         if (_loaders.Any(x => !x.IsLoadingInstant()))
         {
-            WindowManager.ShowWindow<LoadingDialog>();
+            DialogManager.ShowDialog<LoadingDialog>();
         }
         
         LoadAll();

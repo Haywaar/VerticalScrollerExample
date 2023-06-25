@@ -26,10 +26,9 @@ public class InteractablesSpawner : MonoBehaviour, IService
 
     private EventBus _eventBus;
 
-    public void Start()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-
         _eventBus.Subscribe<SpawnInteractableSignal>(Spawn);
         _eventBus.Subscribe<DisposeInteractableSignal>(Dispose);
     }

@@ -14,10 +14,9 @@ public class ScoreController : IService, IDisposable
     private int _score;
     public int Score => _score;
 
-    public ScoreController()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-
         _eventBus.Subscribe<GameStartedSignal>(OnGameStarted);
         _eventBus.Subscribe<AddScoreSignal>(OnScoreAdded);
         _eventBus.Subscribe<LevelFinishedSignal>(OnLevelFinished);

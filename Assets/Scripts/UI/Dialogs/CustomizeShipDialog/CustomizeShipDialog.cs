@@ -10,7 +10,7 @@ namespace UI.Dialogs
     /// <summary>
     /// Окно выбора самолётика
     /// </summary>
-    public class CustomizeShipDialog : Window
+    public class CustomizeShipDialog : Dialog
     {
         [SerializeField] private GridLayoutGroup _elementsGrid;
         [SerializeField] private CustomizeShipSlot _shipSlotPrefab;

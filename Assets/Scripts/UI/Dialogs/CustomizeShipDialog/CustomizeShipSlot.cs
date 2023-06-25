@@ -61,7 +61,7 @@ namespace UI.Dialogs
 
                 if (canBuy)
                 {
-                    var dialog = WindowManager.GetWindow<PurchaseItemDialog>();
+                    var dialog = DialogManager.GetDialog<PurchaseItemDialog>();
                     dialog.Init("Are you sure, that you want to buy this ship for " + _price + " gold ?", () =>
                     {
                         _eventBus.Invoke(new SpendGoldSignal(_price));
@@ -75,7 +75,7 @@ namespace UI.Dialogs
                 }
                 else
                 {
-                    var messageDialog = WindowManager.GetWindow<MessageDialog>();
+                    var messageDialog = DialogManager.GetDialog<MessageDialog>();
                     var messageStr = String.Format("Not enough gold! You have {0} gold, but you need {1} gold!", goldController.Gold, _price);
                     messageDialog.Init(messageStr);
                 }

@@ -16,13 +16,11 @@ public class TileMover : MonoBehaviour
     private bool _isRunning;
 
     private EventBus _eventBus;
-    private void Start()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-        
         _eventBus.Subscribe<GameStartedSignal>(OnGameStart);
         _eventBus.Subscribe<GameStopSignal>(OnGameStop);
-        
         _interactableMover = ServiceLocator.Current.Get<InteractableMover>();
     }
 

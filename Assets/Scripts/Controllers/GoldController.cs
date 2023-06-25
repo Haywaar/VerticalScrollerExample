@@ -13,7 +13,7 @@ public class GoldController : IService, IDisposable
 
     private EventBus _eventBus;
 
-    public GoldController()
+    public void Init()
     {
         _gold = PlayerPrefs.GetInt(StringConstants.GOLD, 7);
 

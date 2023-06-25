@@ -18,10 +18,9 @@ public class SignalSpawner : MonoBehaviour, IService
 
     private EventBus _eventBus;
 
-    private void Start()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-
         _eventBus.Subscribe<SetLevelSignal>(LevelSet);
         _eventBus.Subscribe<GameStartedSignal>(GameStart);
         _eventBus.Subscribe<GameStopSignal>(GameStop);

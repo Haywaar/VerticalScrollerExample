@@ -17,14 +17,14 @@ namespace UI
 
         private EventBus _eventBus;
 
-        private void Start()
+        public void Init()
         {
             _eventBus = ServiceLocator.Current.Get<EventBus>();
             _eventBus.Subscribe<HealthChangedSignal>(DisplayHealth);
-            _eventBus.Subscribe<AllDataLoadedSignal>(Init);
+            _eventBus.Subscribe<AllDataLoadedSignal>(OnAllDataLoaded);
         }
 
-        private void Init(AllDataLoadedSignal signal)
+        private void OnAllDataLoaded(AllDataLoadedSignal signal)
         {
             var shipDataLoader = ServiceLocator.Current.Get<IShipDataLoader>();
             var curShipData = shipDataLoader.GetCurrentShipData();

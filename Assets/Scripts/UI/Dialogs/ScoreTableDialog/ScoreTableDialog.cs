@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UI.Dialogs
 {
-    public class ScoreTableDialog : Window
+    public class ScoreTableDialog : Dialog
     {
         [SerializeField] private ScoreTableSlot _slotPrefab;
         [SerializeField] private Transform _parent;

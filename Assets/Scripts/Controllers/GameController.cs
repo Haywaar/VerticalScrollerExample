@@ -11,14 +11,12 @@ public class GameController : IService, IDisposable
 {
     private EventBus _eventBus;
 
-    public GameController()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-
         _eventBus.Subscribe<PlayerDeadSignal>(OnPlayerDead);
         _eventBus.Subscribe<LevelFinishedSignal>(LevelFinished);
         _eventBus.Subscribe<SetLevelSignal>(StartGame, -1);
-
     }
     
     public void StartGame(SetLevelSignal signal)
@@ -34,7 +32,7 @@ public class GameController : IService, IDisposable
     private void OnPlayerDead(PlayerDeadSignal signal)
     {
         StopGame();
-        WindowManager.ShowWindow<YouLoseDialog>();
+        DialogManager.ShowDialog<YouLoseDialog>();
     }
 
     private void LevelFinished(LevelFinishedSignal signal)
@@ -45,7 +43,7 @@ public class GameController : IService, IDisposable
 
         // Показываем окошко о победе
         var scoreController = ServiceLocator.Current.Get<ScoreController>();
-        var youWinDialog = WindowManager.GetWindow<YouWinDialog>();
+        YouWinDialog youWinDialog = DialogManager.GetDialog<YouWinDialog>();
         youWinDialog.Init(scoreController.Score, scoreController.GetMaxScore(level.ID), level.GoldForPass);
     }
 

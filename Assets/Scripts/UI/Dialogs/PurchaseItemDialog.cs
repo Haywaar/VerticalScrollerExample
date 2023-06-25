@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UI.Dialogs
 {
-    public class PurchaseItemDialog : Window
+    public class PurchaseItemDialog : Dialog
     {
         [SerializeField] private Text _textLabel;
         [SerializeField] private Button _yesBtn;

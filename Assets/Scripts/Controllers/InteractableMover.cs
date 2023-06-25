@@ -26,7 +26,7 @@ public class InteractableMover : MonoBehaviour, IService
 
     private EventBus _eventBus;
 
-    private void Start()
+    public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
 
