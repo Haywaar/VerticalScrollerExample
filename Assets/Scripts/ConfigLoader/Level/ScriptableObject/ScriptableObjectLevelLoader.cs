@@ -7,7 +7,7 @@ public class ScriptableObjectLevelLoader : MonoBehaviour, ILevelLoader
 {
     [SerializeField] private LevelsConfig _levelsConfig;
 
-    public IEnumerable<Level> GetLevels()
+    public IEnumerable<LevelData> GetLevels()
     {
         return _levelsConfig.Levels;
     }

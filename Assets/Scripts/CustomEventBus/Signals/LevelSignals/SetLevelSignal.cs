@@ -5,11 +5,11 @@
     /// </summary>
     public class SetLevelSignal
     {
-        public readonly Level Level;
+        public readonly LevelData LevelData;
 
-        public SetLevelSignal(Level level)
+        public SetLevelSignal(LevelData levelData)
         {
-            Level = level;
+            LevelData = levelData;
         }
     }
 }

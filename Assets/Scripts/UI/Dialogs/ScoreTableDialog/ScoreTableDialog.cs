@@ -8,7 +8,7 @@ namespace UI.Dialogs
         [SerializeField] private ScoreTableSlot _slotPrefab;
         [SerializeField] private Transform _parent;
 
-        public void Init(IEnumerable<Level> levels)
+        public void Init(IEnumerable<LevelData> levels)
         {
             var scoreController = ServiceLocator.Current.Get<ScoreController>();
             

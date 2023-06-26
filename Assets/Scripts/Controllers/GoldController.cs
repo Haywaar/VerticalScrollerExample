@@ -57,7 +57,7 @@ public class GoldController : IService, IDisposable
 
     private void LevelFinished(LevelFinishedSignal signal)
     {
-        OnAddGold(signal.Level.GoldForPass);
+        OnAddGold(signal.LevelData.GoldForPass);
     }
 
     public void Dispose()

@@ -24,7 +24,7 @@ namespace UI.Dialogs
             GenerateLevels(levels);
         }
 
-        private void GenerateLevels(IEnumerable<Level> levels)
+        private void GenerateLevels(IEnumerable<LevelData> levels)
         {
             foreach (var level in levels)
             {

@@ -5,5 +5,5 @@
 /// </summary>
 public interface ILevelLoader : IService, ILoader
 {   
-    public IEnumerable<Level> GetLevels();
+    public IEnumerable<LevelData> GetLevels();
 }

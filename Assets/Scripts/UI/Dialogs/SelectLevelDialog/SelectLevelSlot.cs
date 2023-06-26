@@ -13,18 +13,18 @@ namespace UI.Dialogs
         [SerializeField] private Text _maxScoreText;
         [SerializeField] private Text _levelText;
 
-        public void Init(Level level)
+        public void Init(LevelData levelData)
         {
             _levelClickedButton.onClick.AddListener((() =>
             {
-                PlayerPrefs.SetInt(StringConstants.CURRENT_LEVEL, (level.ID));
+                PlayerPrefs.SetInt(StringConstants.CURRENT_LEVEL, (levelData.ID));
                 SceneManager.LoadScene(StringConstants.MAIN_SCENE_NAME);
             }));
 
-            _levelText.text = (level.ID + 1).ToString();
+            _levelText.text = (levelData.ID + 1).ToString();
 
             var scoreController = ServiceLocator.Current.Get<ScoreController>();
-            _maxScoreText.text = "Max score:" + scoreController.GetMaxScore(level.ID);
+            _maxScoreText.text = "Max score:" + scoreController.GetMaxScore(levelData.ID);
         }
     }
 }

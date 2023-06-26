@@ -14,7 +14,7 @@ public class LevelController : MonoBehaviour, IService
 {
     private ILevelLoader _levelLoader;
     private int _currentLevelId;
-    private Level _currentLevel;
+    private LevelData _currentLevelData;
 
     private EventBus _eventBus;
 
@@ -33,13 +33,13 @@ public class LevelController : MonoBehaviour, IService
     private async void OnInit()
     {
         await UniTask.WaitUntil(_levelLoader.IsLoaded);
-        _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
-        if (_currentLevel == null)
+        _currentLevelData = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
+        if (_currentLevelData == null)
         {
             Debug.LogErrorFormat("Can't find level with id {0}", _currentLevelId);
             return;
         }
-        _eventBus.Invoke(new SetLevelSignal(_currentLevel));
+        _eventBus.Invoke(new SetLevelSignal(_currentLevelData));
     }
 
     private void NextLevel(NextLevelSignal signal)
@@ -51,8 +51,8 @@ public class LevelController : MonoBehaviour, IService
     private void SelectLevel(int level)
     {
         _currentLevelId = level;
-        _currentLevel = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
-        _eventBus.Invoke(new SetLevelSignal(_currentLevel));
+        _currentLevelData = _levelLoader.GetLevels().FirstOrDefault(x => x.ID == _currentLevelId);
+        _eventBus.Invoke(new SetLevelSignal(_currentLevelData));
     }
 
     private void LevelPassed(LevelTimePassedSignal signal)
@@ -61,7 +61,7 @@ public class LevelController : MonoBehaviour, IService
         if (player.Health > 0)
         {
             PlayerPrefs.SetInt(StringConstants.CURRENT_LEVEL, (_currentLevelId + 1));
-            _eventBus.Invoke(new LevelFinishedSignal(_currentLevel));
+            _eventBus.Invoke(new LevelFinishedSignal(_currentLevelData));
         }
     }
 

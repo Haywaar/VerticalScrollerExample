@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 /// </summary>
 public class JsonLevelLoader : ILevelLoader
 {
-    private List<Level> _levelData;
+    private List<LevelData> _levelData;
     private bool _isLoaded;
     private string _fileName;
     public JsonLevelLoader(string fileName)
@@ -19,7 +19,7 @@ public class JsonLevelLoader : ILevelLoader
         _fileName = fileName;
     }
 
-    public IEnumerable<Level> GetLevels()
+    public IEnumerable<LevelData> GetLevels()
     {
         return _levelData;
     }
@@ -48,7 +48,7 @@ public class JsonLevelLoader : ILevelLoader
         else
         {
             var text = request.downloadHandler.text;
-            _levelData = JsonConvert.DeserializeObject<List<Level>>(text);
+            _levelData = JsonConvert.DeserializeObject<List<LevelData>>(text);
             _isLoaded = true;
 
             var eventBus = ServiceLocator.Current.Get<EventBus>();

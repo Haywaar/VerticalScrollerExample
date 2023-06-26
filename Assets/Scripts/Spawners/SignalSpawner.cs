@@ -12,7 +12,7 @@ using UnityEngine;
 public class SignalSpawner : MonoBehaviour, IService
 {
     private bool _isLevelRunning = false;
-    private Level _level;
+    private LevelData _levelData;
 
     private float _curTime;
 
@@ -28,7 +28,7 @@ public class SignalSpawner : MonoBehaviour, IService
 
     private void LevelSet(SetLevelSignal signal)
     {
-        _level = signal.Level;
+        _levelData = signal.LevelData;
     }
 
     private void GameStart(GameStartedSignal signal)
@@ -37,7 +37,7 @@ public class SignalSpawner : MonoBehaviour, IService
 
         _curTime = 0f;
 
-        var interactables = _level.InteractableData;
+        var interactables = _levelData.InteractableData;
 
         foreach (var interactableData in interactables)
         {
@@ -58,7 +58,7 @@ public class SignalSpawner : MonoBehaviour, IService
 
             await UniTask.Delay(TimeSpan.FromSeconds(cooldown));
             cooldown = Mathf.Lerp(interactableSpawnData.StartCooldown,
-                interactableSpawnData.EndCooldown, (_curTime / _level.LevelLength));
+                interactableSpawnData.EndCooldown, (_curTime / _levelData.LevelLength));
         }
     }
 
@@ -74,11 +74,11 @@ public class SignalSpawner : MonoBehaviour, IService
             await UniTask.Delay(TimeSpan.FromSeconds(0.1f));
             _curTime += 0.1f;
 
-            var levelProgress = _curTime / _level.LevelLength;
+            var levelProgress = _curTime / _levelData.LevelLength;
 
             _eventBus.Invoke(new LevelProgressChangedSignal(levelProgress));
 
-            if (_curTime >= _level.LevelLength)
+            if (_curTime >= _levelData.LevelLength)
             {
                 _eventBus.Invoke(new LevelTimePassedSignal());
                 _isLevelRunning = false;

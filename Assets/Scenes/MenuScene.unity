@@ -486,7 +486,7 @@ MonoBehaviour:
   _guiHolder: {fileID: 368064120}
   _scriptableObjectLevelLoader: {fileID: 2094194893}
   _scriptableObjectShipLoader: {fileID: 330764350}
-  _loadFromJSON: 1
+  _loadFromJSON: 0
 --- !u!4 &1897336669
 Transform:
   m_ObjectHideFlags: 0

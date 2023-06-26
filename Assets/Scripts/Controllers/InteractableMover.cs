@@ -56,7 +56,7 @@ public class InteractableMover : MonoBehaviour, IService
 
     private void OnLevelSet(SetLevelSignal signal)
     {
-        var level = signal.Level;
+        var level = signal.LevelData;
 
         _startSpeed = level.StartSpeed;
         _endSpeed = level.EndSpeed;

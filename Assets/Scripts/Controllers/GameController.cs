@@ -37,7 +37,7 @@ public class GameController : IService, IDisposable
 
     private void LevelFinished(LevelFinishedSignal signal)
     {
-        var level = signal.Level;
+        var level = signal.LevelData;
 
         StopGame();
 

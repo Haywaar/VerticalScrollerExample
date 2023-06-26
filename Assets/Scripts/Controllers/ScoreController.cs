@@ -37,7 +37,7 @@ public class ScoreController : IService, IDisposable
     // Сверяем текущий счёт уровня с максимальным, если что - обновляем рекорд
     private void OnLevelFinished(LevelFinishedSignal signal)
     {
-        var level = signal.Level;
+        var level = signal.LevelData;
         var maxScore = GetMaxScore(level.ID);
         if (_score > maxScore)
         {
