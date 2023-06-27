@@ -25,20 +25,7 @@ namespace UI
             {typeof(CustomizeShipDialog),"MenuDialogs/CustomizeShipDialog"},
         };
 
-        public static void ShowDialog<T>() where T : Dialog
-        {
-            CreateDialog<T>();
-        }
-
-        public static T GetDialog<T>() where T : Dialog
-        {
-            var obj = CreateDialog<T>();
-            var component = obj.GetComponent<T>();
-        
-            return component;
-        }
-        
-        private static GameObject CreateDialog<T>() where T : Dialog
+        public static T ShowDialog<T>() where T : Dialog
         {
             var go = GetPrefabByType<T>();
             if (go == null)
@@ -46,11 +33,11 @@ namespace UI
                 Debug.LogError("Show window - object not found");
                 return null;
             }
-
+            
             return GameObject.Instantiate(go, GuiHolder);
         }
 
-        private static GameObject GetPrefabByType<T>() where T : Dialog
+        private static T GetPrefabByType<T>() where T : Dialog
         {
             var prefabName =  PrefabsDictionary[typeof(T)];
             if (string.IsNullOrEmpty(prefabName))
@@ -59,15 +46,18 @@ namespace UI
             }
 
             var path = PrefabsFilePath + PrefabsDictionary[typeof(T)];
-            var windowGO = Resources.Load<GameObject>(path);
-            if (windowGO == null)
+            var dialog = Resources.Load<T>(path);
+            if (dialog == null)
             {
                 Debug.LogError("Cant find prefab at path " + path);
             }
 
-            return windowGO;
+            return dialog;
         }
     
+        /// <summary>
+        /// Ссылка на канвас на сцене, чтобы к нему подцеплялись наши окна
+        /// </summary>
         public static Transform GuiHolder
         {
             get { return ServiceLocator.Current.Get<GUIHolder>().transform; }

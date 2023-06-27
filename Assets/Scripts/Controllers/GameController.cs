@@ -43,7 +43,7 @@ public class GameController : IService, IDisposable
 
         // Показываем окошко о победе
         var scoreController = ServiceLocator.Current.Get<ScoreController>();
-        YouWinDialog youWinDialog = DialogManager.GetDialog<YouWinDialog>();
+        YouWinDialog youWinDialog = DialogManager.ShowDialog<YouWinDialog>();
         youWinDialog.Init(scoreController.Score, scoreController.GetMaxScore(level.ID), level.GoldForPass);
     }
 

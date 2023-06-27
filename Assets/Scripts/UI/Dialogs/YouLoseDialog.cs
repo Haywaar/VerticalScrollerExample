@@ -26,7 +26,7 @@ namespace UI.Dialogs
 
         private void TryAgain()
         {
-            _eventBus.Invoke(new StartLevelSignal());
+            _eventBus.Invoke(new RestartLevelSignal());
             Hide();
         }
 

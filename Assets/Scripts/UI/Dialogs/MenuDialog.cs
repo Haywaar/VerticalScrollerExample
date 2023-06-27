@@ -46,7 +46,7 @@ namespace UI.Dialogs
         {
             var levelLoader = ServiceLocator.Current.Get<ILevelLoader>();
             var levels = levelLoader.GetLevels().OrderBy(x => x.ID).ToList();
-            var scoreTableDialog = DialogManager.GetDialog<ScoreTableDialog>();
+            var scoreTableDialog = DialogManager.ShowDialog<ScoreTableDialog>();
             scoreTableDialog.Init(levels);
         }
     

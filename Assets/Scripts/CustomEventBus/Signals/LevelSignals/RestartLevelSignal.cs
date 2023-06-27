@@ -3,7 +3,7 @@
     /// <summary>
     /// Сигнал "Запусти текущий уровень"
     /// </summary>
-    public class StartLevelSignal
+    public class RestartLevelSignal
     {
     }
 }

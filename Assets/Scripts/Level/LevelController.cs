@@ -23,6 +23,7 @@ public class LevelController : MonoBehaviour, IService
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Subscribe<LevelTimePassedSignal>(LevelPassed);
         _eventBus.Subscribe<NextLevelSignal>(NextLevel);
+        _eventBus.Subscribe<RestartLevelSignal>(RestartLevel);
 
         _levelLoader = ServiceLocator.Current.Get<ILevelLoader>();
         _currentLevelId = PlayerPrefs.GetInt(StringConstants.CURRENT_LEVEL, 0);
@@ -48,6 +49,11 @@ public class LevelController : MonoBehaviour, IService
         SelectLevel(_currentLevelId);
     }
 
+    private void RestartLevel(RestartLevelSignal signal)
+    {
+        _eventBus.Invoke(new SetLevelSignal(_currentLevelData));
+    }
+    
     private void SelectLevel(int level)
     {
         _currentLevelId = level;
